@@ -19,12 +19,12 @@ Input: [1,2,3] - Output: [3,6,9] */
 
 {
     let arr = [-1,-5,3,5,12]
-    let sum = 0
-    for (let i of arr){
+    let sum = arr.filter((num) => num>0).reduce((sum,item) => sum+item,0)
+   /*  for (let i of arr){
         if(i>0){
             sum+=i
         }
-    }
+    } */
     console.log(sum)
 }
 
