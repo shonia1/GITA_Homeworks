@@ -2,13 +2,25 @@
 და ითვლის უკუსვლით იქმადე სანამ 0-მდე არ მივა */
 
 {
-    function timer(sec) {
+   /*  function timer(sec) {
         while (sec >= 0) {
             console.log(sec)
             sec--
         }
     }
-    timer(10)
+    timer(10) */
+
+    function timer(sec) {
+        let interval = setInterval(() => {
+            console.log(sec)
+            sec--
+            if(sec<0){
+                clearInterval(interval)
+            }
+        }, 1000);
+    }
+timer(5)
+
 }
 
 /* 2. დაწერე ფუქნცია. ფუქნციას გადააწოდე რიცხვი. 
