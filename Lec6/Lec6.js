@@ -95,3 +95,46 @@ Promise.allSettled([aPromise,bPromise,cPromise,dPromise])
 })
 .catch((error) => console.error("Error: ",error))
 
+/* 5) შექმენი 5 ფრომისი და გაფილტრე ეს ფრომისები. 
+დააბრუნე ამრტო წარუმატებლები */
+
+let aPromise = new Promise((res,rej) => {
+    rej("rejected")
+})
+let bPromise = new Promise((res,rej) => {
+    res("resolved")
+})
+let cPromise = new Promise((res,rej) => {
+    res("resolved")
+})
+let dPromise = new Promise((res,rej) => {
+    rej("rejected")
+})
+let ePromise = new Promise((res,rej) => {
+    rej("rejected")
+})
+
+Promise.allSettled([aPromise,bPromise,cPromise,dPromise,ePromise])
+.then(resp => {
+    let filteredPromise = resp.filter((el) => el.status === "rejected")
+    console.log(filteredPromise)
+})
+
+/* 6)api1 = https://jsonplaceholder.typicode.com/users
+api2 = https://jsonplaceholder.typicode.com/posts
+გაუშვი ეს ორი API ერთდროულად */
+
+let api1 = "https://jsonplaceholder.typicode.com/users"
+let api2 = "https://jsonplaceholder.typicode.com/posts"
+
+async function fetchAPI(API) {
+    let response = await fetch(API)
+    let data = await response.json()
+    return data
+}
+
+/* fetchAPI(api1)
+fetchAPI(api2) */
+
+Promise.allSettled([fetchAPI(api1),fetchAPI(api2)])
+.then(data => console.log(data))
