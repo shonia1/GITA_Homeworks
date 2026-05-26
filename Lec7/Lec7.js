@@ -60,3 +60,36 @@ const typeOfTriangle = triangle.isRightTriangle()
 console.log(typeOfTriangle)
 
 
+/* 2) შექმენი Smartphone (სმარტფონი) კლასი property-ებით: brand, model, releaseYear. 
+გააკეთე ექსტენშენი GamingPhone, რომელსაც დაემატება gpuScore და batteryCapacity, 
+და დაამატე მეთოდი performanceIndex(). */
+
+class Smartphone {
+    constructor(brand, model, releaseYear) {
+        this.brand = brand
+        this.model = model
+        this.releaseYear = releaseYear
+    }
+}
+
+class GamingPhone extends Smartphone {
+    constructor(brand, model, releaseYear, gpuScore, batteryCapacity) {
+        super(brand, model, releaseYear)
+        this.gpuScore = gpuScore
+        this.batteryCapacity = batteryCapacity
+    }
+    performanceIndex() {
+        if (this.gpuScore > 90) {
+            return "Top Tier"
+        } else if (this.gpuScore > 80 && this.gpuScore < 90) {
+            return "Good Tier"
+        } else {
+            return "Not gaming phone"
+        }
+    }
+
+}
+
+const phone = new GamingPhone("Apple", "11", 2020, 89, 3600)
+console.log(phone);
+console.log(phone.performanceIndex())
