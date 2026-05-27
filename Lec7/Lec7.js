@@ -93,3 +93,81 @@ class GamingPhone extends Smartphone {
 const phone = new GamingPhone("Apple", "11", 2020, 89, 3600)
 console.log(phone);
 console.log(phone.performanceIndex())
+
+
+/* 3)შექმენი CryptoWallet (კრიპტო საფულე) კლასი, 
+მეთოდებით: deposit(), withdraw(), transfer(), getHistory(), */
+
+class CryproWallet {
+    constructor(current) {
+        this.current = current
+        //ცარიელი მასივი ისტორიის შესანახად
+        this.history = []
+        //მეორე საფულე, ტრანსფერითვის
+        this.secondWallet = 0
+    }
+    deposit(deposit) {
+        //შეყვანილი რიცხვის ვალიდურობა
+        if (deposit < 0) {
+            return "შეიყვანეთ დადებითი რიცხვი"
+        }
+        //მიმდინარე ბალანსის აფდეითი
+        this.current += deposit
+        //ისტორიის შენაცვა ობირქტად
+        this.history.push({
+            ტიპი: "შემოტანა",
+            თანხა: deposit
+        })
+        //ყვოცელთვის ვაბრუნებთ მიმდინარე ბალანსს
+        return this.current
+    }
+
+    withdraw(withdraw) {
+        if (withdraw < 0) {
+            return "შეიყვანეთ დადებითი რიცხვი"
+        } else if (this.current < withdraw) {
+            return "თანხა ანგარიშზე საკმარისი არ არის"
+        }
+        this.current -= withdraw
+        this.history.push({
+            ტიპი: "გატანა",
+            თანხა: withdraw
+        })
+        return this.current
+    }
+
+    transfer(transfer) {
+        //ვამოწმებთ შეყვანილი რიცხვს
+        if (this.current < transfer) {
+            return "თანხა ანგარიშზე საკმარისი არ არის"
+        } else if (transfer < 0) {
+            return "შეიყვანეთ დადებითი რიცხვი"
+        }
+        //ვაკორექტირებთ მიმდინარე ბალანს
+        this.current -= transfer
+        //ვამატებთ მეორე საფულეში
+        this.secondWallet += transfer
+        //ვინახავთ ისტორიას
+        this.history.push({
+            ტიპი: "გადარიცხვა",
+            თანხა: transfer
+        })
+        return this.current
+    }
+
+    //მხოლოდ დააბრუნებს იმ ჩაფუშულ ინფორმაციას რაც ტითოეულ მოქმედებაში ხდება
+    getHistory() {
+        return this.history 
+    }
+}
+
+//შევინახოთ ცვლადში
+const wallet = new CryproWallet(1000)
+
+console.log(wallet.deposit(100))
+console.log(wallet.withdraw(200))
+console.log(wallet.transfer(50))
+console.log(wallet.getHistory())
+console.log(wallet.secondWallet)
+console.log(wallet.current)
+
