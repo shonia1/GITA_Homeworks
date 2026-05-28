@@ -99,12 +99,10 @@ console.log(phone.performanceIndex())
 მეთოდებით: deposit(), withdraw(), transfer(), getHistory(), */
 
 class CryproWallet {
-    constructor(current) {
+    constructor(current = 0) {
         this.current = current
         //ცარიელი მასივი ისტორიის შესანახად
         this.history = []
-        //მეორე საფულე, ტრანსფერითვის
-        this.secondWallet = 0
     }
     deposit(deposit) {
         //შეყვანილი რიცხვის ვალიდურობა
@@ -136,7 +134,7 @@ class CryproWallet {
         return this.current
     }
 
-    transfer(transfer) {
+    transfer(transfer, otherAccount) {
         //ვამოწმებთ შეყვანილი რიცხვს
         if (this.current < transfer) {
             return "თანხა ანგარიშზე საკმარისი არ არის"
@@ -146,7 +144,7 @@ class CryproWallet {
         //ვაკორექტირებთ მიმდინარე ბალანს
         this.current -= transfer
         //ვამატებთ მეორე საფულეში
-        this.secondWallet += transfer
+        otherAccount.deposit(transfer)
         //ვინახავთ ისტორიას
         this.history.push({
             ტიპი: "გადარიცხვა",
@@ -162,12 +160,66 @@ class CryproWallet {
 }
 
 //შევინახოთ ცვლადში
-const wallet = new CryproWallet(1000)
+const firstWallet = new CryproWallet()
+const secondWallet = new CryproWallet()
 
-console.log(wallet.deposit(100))
-console.log(wallet.withdraw(200))
-console.log(wallet.transfer(50))
-console.log(wallet.getHistory())
-console.log(wallet.secondWallet)
-console.log(wallet.current)
+console.log(firstWallet.current)
+console.log(secondWallet.current)
+
+console.log(firstWallet.deposit(500))
+console.log(firstWallet.withdraw(100))
+console.log(firstWallet.transfer(150, secondWallet))
+
+console.log(firstWallet.getHistory())
+console.log(secondWallet.getHistory());
+
+
+console.log(firstWallet.current)
+console.log(secondWallet.current)
+
+/* 4)შექმენი Wishlist (სურვილების სია) კლასი,
+რომელიც ინახავს ნივთებს. მეთოდები: addItem(), deleteItem(id), updateItem() */
+
+class Wishlist {
+    constructor() {
+        this.storage = []
+    }
+    
+    addItem(item) {
+        const lastId = this.storage.length > 0 
+        ? this.storage[this.storage.length-1].id +1 : 1
+
+        this.storage.push({
+            id: lastId,
+            name: item,
+            date: new Date()
+        })
+        return this.storage
+    }
+
+    deleteItem(id) {
+            this.storage = this.storage.filter((el) => el.id !== id)
+            return this.storage  
+    }
+
+    updateItem(id, newName) {
+        const findItem = this.storage.find((el) => el.id === id)
+        if (findItem) {
+            findItem.name = newName
+            return findItem
+        } else {
+            return "id ვერ ვიპოვე"
+        }
+    }
+}
+
+const storage = new Wishlist()
+
+console.log(storage.addItem("a"))
+console.log(storage.addItem("b"))
+console.log(storage.addItem("c"))
+
+console.log(storage.updateItem(3, "d"))
+
+console.log(storage.storage)
 
