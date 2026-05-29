@@ -223,3 +223,32 @@ console.log(storage.updateItem(3, "d"))
 
 console.log(storage.storage)
 
+
+/* 5)შექმენი Freelancer (ფრილანსერი) კლასი მეთოდით calculateEarnings(),
+რომელიც დათვლის შემოსავალს შესრულებული საათებისა და საათობრივი ტარიფის მიხედვით,
+დამატებით optional bonus-ს გადამეტებულ საათებზე (მაგ >160 სთ). */
+
+class Freelancer {
+    constructor(pricePerHour, overTimePercent ) {
+        this.pricePerHour = pricePerHour
+        this.overTimePercent = overTimePercent
+    }
+    //ამ მეთოდმა დინამიურობისთვის მიიღოს პარამეტრი(მაგ. თვეების მიხედვით)
+    calculateEarnings(workingTime) {
+        if (workingTime > 160) {
+            const basePay = workingTime * this.pricePerHour
+            const overTime = basePay * (this.overTimePercent/100)
+            //console.log(basePay + overTime)
+            return basePay + overTime
+        } else {
+            const basePay = workingTime * this.pricePerHour
+            //console.log(basePay);
+            return basePay
+        }
+    }
+}
+
+const pay = new Freelancer(5,5)
+console.log(pay.calculateEarnings(161)) //აპრილი
+console.log(pay.calculateEarnings(160)) //მაისი
+
