@@ -144,7 +144,7 @@ function twoSum(arr, target /*-15*/) {
   for (let num1 = 0; num1 < arr.length; num1++) {
     for (let num2 = num1 + 1; num2 < arr.length; num2++) {
       if (arr[num1] + arr[num2] === target) {
-        return [arr[num1], arr[num2]];
+        return [num1, num2];
       }
     }
   }
