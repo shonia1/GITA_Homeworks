@@ -58,3 +58,78 @@ splice-მ არ დაგაბნიოთ splice(საიდან და�
   let unique = [...new Set(arr)];
   console.log(unique);
 }
+
+//7) გაყავი მასივი ორ ცალკე მასრივში (ლუწი და კენტი) და დაბეჭდე ორივე
+{
+  let arr = [1, 2, 3, 4, 5, 6, 7];
+  let even = [];
+  let odd = [];
+  for (let i = 0; i < arr.length; i++) {
+    let value = arr[i];
+    if (value % 2 === 0) {
+      even.push(value);
+    } else {
+      odd.push(value);
+    }
+  }
+  console.log(even);
+  console.log(odd);
+}
+
+//8) დაითვალე დადებითი რიცხვების რაოდენობა და უარყოფითი რიცხვების ჯამი
+{
+  let arr = [1, 2, 3, 4, 5, 6, 7, -1, -2, -3, -4];
+  let positiveCount = 0;
+  let negativeSum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    let value = arr[i];
+    if (value > 0) {
+      positiveCount++;
+    } else {
+      negativeSum += value;
+    }
+  }
+  console.log(positiveCount);
+  console.log(negativeSum);
+}
+
+//9) დააბრუნე მასივის თითოეული ელემენტის ინვერსი
+{
+  let arr = [1, -2];
+  let inverted = [];
+  for (let i = 0; i < arr.length; i++) {
+    inverted.push(-arr[i]);
+  }
+  console.log(inverted);
+}
+
+//10) გაანაყყე რთული ნესტირებული მასივი ერთ რიგოვან მასივად
+{
+  let arr = [1, [2, [3]], [4]];
+  let flattened = [];
+  function flatten(item) {
+    if (Array.isArray(item)) {
+      for (let i = 0; i < item.length; i++) {
+        flatten(item[i]);
+      }
+    } else {
+      flattened.push(item);
+    }
+  }
+  flatten(arr);
+  console.log(flattened);
+}
+
+//11) წაშალე "banana" და "orange"-ის წინ დაამატე "mango"
+{
+  let fruits = ["apple", "banana", "orange", "kiwi"];
+  let bananaIndex = fruits.indexOf("banana");
+  if (bananaIndex !== -1) {
+    fruits.splice(bananaIndex, 1);
+  }
+  let orangeIndex = fruits.indexOf("orange");
+  if (orangeIndex !== -1) {
+    fruits.splice(orangeIndex, 0, "mango");
+  }
+  console.log(fruits);
+}
