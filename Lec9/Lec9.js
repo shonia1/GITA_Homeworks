@@ -54,20 +54,22 @@ let = "I love JavaScript"
     {
     function numCheck(num) {
         if (num <= 1) return `${num} არც მარტივია და არც შედგენილი`;
-        if (num === 2) return `${num} მარტივია`;
-        if (num%2 === 0) return `${num} შედგენილია`;
+        if (num === 2) return true;
+        if (num%2 === 0) return false;
         //ყოველ ნაბიჯზე i-ს ვზრდით 2-ით
         //რადგან ლუწებზე შემოწმება აზრი არ აქვს.ნუმი ისედაც კენტია
         for (let i = 3; i <= Math.sqrt(num); i+=2) { 
             if (num % i === 0) { //თუ num უნაშთოდ იყოფა i-ზე, ეს ნიშნავს,რომ ვიპოვეთ გამყოფი
-                return `${num} შედგენილია`;
+                return false;
             }
         }
-        return `${num} მარტივია`
+        return true
     }
 
     console.log(numCheck(1));
     console.log(numCheck(2));
     console.log(numCheck(9));
+    console.log(numCheck(10));
     console.log(numCheck(15));
+    console.log(numCheck(19));
 }
