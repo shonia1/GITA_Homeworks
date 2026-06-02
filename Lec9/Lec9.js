@@ -73,3 +73,15 @@ let = "I love JavaScript"
     console.log(numCheck(15));
     console.log(numCheck(19));
 }
+
+//4) let words = ["dog", "elephant", "cat", "hippopotamus"] იპოვე ყველაზე გრძელი ისტყვა
+
+{
+  let words = ["dog", "elephant", "cat", "hippopotamus"];
+  let longestWord = words.reduce((tot,cur) => {
+      tot.push({name: cur, length: cur.length})
+    return tot
+  },[])
+  console.log(longestWord);
+   console.log(longestWord.sort((a,b) => b.length-a.length)[0])
+}
