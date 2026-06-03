@@ -51,37 +51,52 @@ let = "I love JavaScript"
 }
 
 //3) დაწერე ფუნქიცა რომელიც დააბრუნებს true თუ რიცხვი მარტივია თუ არადა false.
-    {
-    function numCheck(num) {
-        if (num <= 1) return `${num} არც მარტივია და არც შედგენილი`;
-        if (num === 2) return true;
-        if (num%2 === 0) return false;
-        //ყოველ ნაბიჯზე i-ს ვზრდით 2-ით
-        //რადგან ლუწებზე შემოწმება აზრი არ აქვს.ნუმი ისედაც კენტია
-        for (let i = 3; i <= Math.sqrt(num); i+=2) { 
-            if (num % i === 0) { //თუ num უნაშთოდ იყოფა i-ზე, ეს ნიშნავს,რომ ვიპოვეთ გამყოფი
-                return false;
-            }
-        }
-        return true
+{
+  function numCheck(num) {
+    if (num <= 1) return `${num} არც მარტივია და არც შედგენილი`;
+    if (num === 2) return true;
+    if (num % 2 === 0) return false;
+    //ყოველ ნაბიჯზე i-ს ვზრდით 2-ით
+    //რადგან ლუწებზე შემოწმება აზრი არ აქვს.ნუმი ისედაც კენტია
+    for (let i = 3; i <= Math.sqrt(num); i += 2) {
+      if (num % i === 0) {
+        //თუ num უნაშთოდ იყოფა i-ზე, ეს ნიშნავს,რომ ვიპოვეთ გამყოფი
+        return false;
+      }
     }
+    return true;
+  }
 
-    console.log(numCheck(1));
-    console.log(numCheck(2));
-    console.log(numCheck(9));
-    console.log(numCheck(10));
-    console.log(numCheck(15));
-    console.log(numCheck(19));
+  console.log(numCheck(1));
+  console.log(numCheck(2));
+  console.log(numCheck(9));
+  console.log(numCheck(10));
+  console.log(numCheck(15));
+  console.log(numCheck(19));
 }
 
 //4) let words = ["dog", "elephant", "cat", "hippopotamus"] იპოვე ყველაზე გრძელი ისტყვა
 
 {
   let words = ["dog", "elephant", "cat", "hippopotamus"];
-  let longestWord = words.reduce((tot,cur) => {
-      tot.push({name: cur, length: cur.length})
-    return tot
-  },[])
+  let longestWord = words.reduce((tot, cur) => {
+    tot.push({ name: cur, length: cur.length });
+    return tot;
+  }, []);
   console.log(longestWord);
-   console.log(longestWord.sort((a,b) => b.length-a.length)[0])
+  console.log(longestWord.sort((a, b) => b.length - a.length)[0]);
+}
+
+//5)დააბრუნე ისეთი რიცხვი რომელიც მეორდება უფრო მეტჯერ
+{
+  let arr = [3, 5, 3, 2, 5, 5, 3, 5];
+  let count = {};
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] in count){
+      count[arr[i]]++ //count ობიექტია, arr[i] კონკრეტული რიცხვია(მაგ.3)
+    } else{
+      count[arr[i]] = 1 //პირველ ჯერზე როცა შეხვდება ელემენტს ლუპი, ყოველთვის ამ ლაინს გაუშვებს.
+    }
+  }
+  console.log(count);
 }
