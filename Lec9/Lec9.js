@@ -92,11 +92,43 @@ let = "I love JavaScript"
   let arr = [3, 5, 3, 2, 5, 5, 3, 5];
   let count = {};
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] in count){
-      count[arr[i]]++ //count ობიექტია, arr[i] კონკრეტული რიცხვია(მაგ.3)
-    } else{
-      count[arr[i]] = 1 //პირველ ჯერზე როცა შეხვდება ელემენტს ლუპი, ყოველთვის ამ ლაინს გაუშვებს.
+    if (arr[i] in count) {
+      count[arr[i]]++; //count ობიექტია, arr[i] კონკრეტული რიცხვია(მაგ.3)
+    } else {
+      count[arr[i]] = 1; //პირველ ჯერზე როცა შეხვდება ელემენტს ლუპი, ყოველთვის ამ ლაინს გაუშვებს.
     }
   }
   console.log(count);
+}
+
+//6)let nums = [1, 2, 3, 4, 5, 6, 7, 8] დაწერე ფუქნცია რომელიც დაითვლის რამდენი ლუწი და რამდენი კენტი რიცხვია
+{
+  let nums = [1, 2, 3, 4, 5, 6, 7, 8];
+
+  function oddEven(arr) {
+    let oddNums = [];
+    let evenNums = [];
+    for (const i of arr) {
+      if (arr[i] % 2 === 0) {
+        evenNums.push(arr[i]);
+      } else {
+        oddNums.push(arr[i]);
+      }
+    }
+    return [`კენტები: ${oddNums.length}, ლუწები: ${evenNums.length}`];
+  }
+
+  console.log(oddEven(nums));
+}
+
+//7)let nums = [10, 2, 33, 5, 7] დაწერე ფუქნცია როემლიც დააბრუენბს ყველაზე პატარა რიცხვს
+{
+  let nums = [10, 2, 33, 5, 7];
+
+  function smallestNum(arr) {
+    const smallest = arr.sort((a, b) => a - b)[0];
+    return smallest;
+  }
+
+  console.log(smallestNum(nums));
 }
