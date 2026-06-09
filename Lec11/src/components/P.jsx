@@ -1,3 +1,3 @@
 export default function P() {
-  return <p>Paragraph</p>;
+  return <p className="P">Paragraph</p>;
 }

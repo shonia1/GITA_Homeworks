@@ -1,25 +1,28 @@
 import H1 from "./components/H1";
 import Input from "./components/Input";
 import P from "./components/P";
+import "./App.css";
 
 function App() {
-  const str = "string";
-  const num = 11;
-  const arr = ["arr1", "arr2", "arr3"];
-  const obj = {
+  let obj = {
     name: "ana",
     age: 22,
   };
-  const func = () => {
-    return 2 * 5;
+  let str = obj.name;
+  let num = obj.age;
+  let arr = [obj.name, obj.age];
+  let func = () => {
+    return obj.age + 1;
   };
-  console.log(str, num, arr, obj, func);
+  //console.log(str, num, arr, obj, func);
   return (
     <>
       <H1 />
       <Input />
       <P />
-      {str},{num},{arr},{obj.age},{func()}
+      <div className="div">
+        {str}, {num}, {arr.join(":")}, {obj.age}, {func()}
+      </div>
     </>
   );
 }
