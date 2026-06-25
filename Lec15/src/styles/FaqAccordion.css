@@ -7,7 +7,7 @@ body {
   min-height: 100vh;
   /* 🛑 ვცვლით flex-ს მობაილზე, რომ კონტენტს სქროლვის საშუალება მისცეს */
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   justify-content: flex-start; /* იწყება ზემოდან, რომ სქროლი სწორად იმუშაოს */
   align-items: center;
   background: linear-gradient(
@@ -27,7 +27,7 @@ body {
   box-shadow: 0px 50px 50px -20px rgba(53, 18, 122, 0.5);
   padding: 24px;
   /* 🛑 ვასწორებთ მარჟინებს: ზემოდან 140px (სურათისთვის), ქვემოდან 60px, რომ ბოლოში ფონი გამოჩნდეს */
-  margin: 140px auto 60px auto; 
+  margin: 140px auto 60px auto;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -83,6 +83,9 @@ body {
   margin-top: 105px;
   width: 100%;
   box-sizing: border-box;
+  max-height: 290px;
+  /* overflow-y: auto; */ /*სქროლია, თუ დამჭირდა იყოს */
+  padding-right: 5px;
 }
 
 /* ==========================================================================
@@ -97,7 +100,7 @@ body {
   text-align: center;
 }
 
-.acoordion-item {
+.accordion-item {
   border-bottom: 1px solid #e8e8ea;
   padding: 18px 0;
   width: 100%;
@@ -118,7 +121,7 @@ body {
   box-sizing: border-box;
 }
 
-.accordion-question h4 {
+.accordion-question h2 {
   margin: 0;
   font-size: 14px;
   font-weight: 400;
@@ -130,11 +133,11 @@ body {
   overflow-wrap: break-word;
 }
 
-.accordion-question:hover h4 {
+.accordion-question:hover h2 {
   color: #f47b56;
 }
 
-.accordion-question.active h4 {
+.accordion-question.active h2 {
   font-weight: 700;
   color: #1e1f36;
 }
@@ -160,7 +163,6 @@ body {
   overflow-wrap: break-word;
 }
 
-
 /* ==========================================================================
    4. დესკტოპის კონფიგურაცია (Media Query)
    ========================================================================== */
@@ -179,21 +181,19 @@ body {
   .faq-card {
     width: 920px;
     max-width: 920px;
-    min-height: auto; 
-    /* 🛑 დესკტოპზე ვაუქმებთ მობაილის დიდ ზედა მარჟინს */
-    margin: 0 auto; 
+    min-height: auto;
+    margin: 0 auto;
     flex-direction: row;
     align-items: center;
-    padding: 65px 65px 65px 0; 
+    padding: 65px 65px 65px 0;
     box-sizing: border-box;
   }
 
-  /* 🛑 გადატანილია მედია ქუერის შიგნით, რომ მობაილი აღარ აირიოს */
   .image-container {
     width: 50%;
     max-width: 460px;
     flex: 0 0 50%;
-    height: 380px; 
+    height: 380px;
     position: relative;
   }
 
@@ -204,7 +204,7 @@ body {
     flex: 0 0 50%;
     margin-top: 0;
     padding-left: 20px;
-    padding-right: 40px; 
+    padding-right: 40px;
     box-sizing: border-box;
   }
 
@@ -216,47 +216,47 @@ body {
   .desktop-image-block {
     display: block;
     position: absolute;
-    top: -65px;    
-    bottom: -65px; 
+    top: -65px;
+    bottom: -65px;
     left: 0;
     right: 0;
-    overflow: hidden; 
-    border-radius: 23px 0 0 23px; 
+    overflow: hidden;
+    border-radius: 23px 0 0 23px;
   }
 
-  /* მთავარი ილუსტრაცია (ქალი კომპიუტერით) */
+  /* მთავარი ილუსტრაცია */
   .desktop-image-block .desktop-only-img:nth-child(1) {
     position: absolute;
     top: 50%;
-    left: -80px; 
+    left: -80px;
     transform: translateY(-50%);
     width: 472px;
     max-width: none;
     height: auto;
-    z-index: 2; 
+    z-index: 2;
   }
 
-  /* უკანა ფონი (დიდი პატერნი) */
+  /* უკანა ფონი */
   .desktop-image-block .desktop-only-img:nth-child(2) {
     position: absolute;
     top: 180px;
-    left: -580px; 
+    left: -580px;
     transform: translateY(-50%);
     width: 960px;
     max-width: none;
     height: auto;
-    z-index: 1; 
+    z-index: 1;
   }
 
-  /* ნარინჯისფერი ყუთი (Box) */
+  /*ყუთი  */
   .box-img {
     display: block;
     position: absolute;
     top: 240px;
-    left: -93px; 
+    left: -93px;
     transform: translateY(-50%);
     width: 191px;
     height: auto;
-    z-index: 20; 
+    z-index: 20;
   }
-} /* მედია ქუერის დასასრული (ახლა უკვე სწორ ადგილასაა) */
+}

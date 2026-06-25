@@ -14,12 +14,12 @@ export default function AccordionItem({
   onToggle,
 }: AccordionItemProps) {
   return (
-    <div className="acoordion-item">
+    <div className="accordion-item">
       <button
         className={`accordion-question ${isOpen ? "active" : ""}`}
         onClick={onToggle}
       >
-        <h4>{question}</h4>
+        <h2>{question}</h2>
         <img src={arrowImg} alt="arrow" className="arrow-icon" />
       </button>
       {isOpen && <p className="accordion-answer">{answer}</p>}
