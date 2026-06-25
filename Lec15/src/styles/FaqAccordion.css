@@ -1,0 +1,262 @@
+/* ==========================================================================
+   1. გლობალური ბაზა
+   ========================================================================== */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  /* 🛑 ვცვლით flex-ს მობაილზე, რომ კონტენტს სქროლვის საშუალება მისცეს */
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-start; /* იწყება ზემოდან, რომ სქროლი სწორად იმუშაოს */
+  align-items: center;
+  background: linear-gradient(
+    180deg,
+    hsl(273, 75%, 66%) 0%,
+    hsl(240, 73%, 65%) 100%
+  );
+  font-family: "Kumbh Sans", sans-serif;
+  box-sizing: border-box;
+}
+
+.faq-card {
+  background-color: #ffffff;
+  width: 327px;
+  min-height: auto; /* 🛑 ვცვლით auto-ზე, რომ სიმაღლე ტექსტთან ერთად გაიზარდოს */
+  border-radius: 23px;
+  box-shadow: 0px 50px 50px -20px rgba(53, 18, 122, 0.5);
+  padding: 24px;
+  /* 🛑 ვასწორებთ მარჟინებს: ზემოდან 140px (სურათისთვის), ქვემოდან 60px, რომ ბოლოში ფონი გამოჩნდეს */
+  margin: 140px auto 60px auto; 
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   2. იმიჯების მართვა - მობაილი (Default სტილები)
+   ========================================================================== */
+.image-container {
+  position: relative;
+  width: 100%; /* 🛑 მობაილზე იკავებს სრულ სიგანეს, რომ არ აირიოს */
+  box-sizing: border-box;
+}
+
+/* დესკტოპის ბლოკები დამალულია მობაილზე */
+.desktop-image-block,
+.box-img {
+  display: none;
+}
+
+.mobile-image-block {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.mobile-image-block img:nth-child(1) {
+  position: relative;
+  top: -40px;
+  width: 240px;
+  height: auto;
+  z-index: 5;
+}
+
+.mobile-image-block img:nth-child(2) {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: auto;
+  z-index: 1;
+}
+
+.faq-content {
+  margin-top: 105px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   3. FAQ აკორდეონის სტილები (საერთო მობაილისთვის და დესკტოპისთვის)
+   ========================================================================== */
+.faq-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e1f36;
+  margin-top: 0;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.acoordion-item {
+  border-bottom: 1px solid #e8e8ea;
+  padding: 18px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.accordion-question {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.accordion-question h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #4a4b5e;
+  transition: color 0.2s ease;
+  padding-right: 15px;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.accordion-question:hover h4 {
+  color: #f47b56;
+}
+
+.accordion-question.active h4 {
+  font-weight: 700;
+  color: #1e1f36;
+}
+
+.arrow-icon {
+  width: 10px;
+  height: 6px;
+  transition: transform 0.3s ease;
+}
+
+.accordion-question.active .arrow-icon {
+  transform: rotate(180deg);
+}
+
+.accordion-answer {
+  margin: 0;
+  padding-top: 12px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #787887;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+
+/* ==========================================================================
+   4. დესკტოპის კონფიგურაცია (Media Query)
+   ========================================================================== */
+@media (min-width: 992px) {
+  /* 🛑 დესკტოპზე body-ს ვაბრუნებთ იდეალურ ჰორიზონტალურ და ვერტიკალურ ცენტრში */
+  body {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-image-block {
+    display: none !important;
+  }
+
+  .faq-card {
+    width: 920px;
+    max-width: 920px;
+    min-height: auto; 
+    /* 🛑 დესკტოპზე ვაუქმებთ მობაილის დიდ ზედა მარჟინს */
+    margin: 0 auto; 
+    flex-direction: row;
+    align-items: center;
+    padding: 65px 65px 65px 0; 
+    box-sizing: border-box;
+  }
+
+  /* 🛑 გადატანილია მედია ქუერის შიგნით, რომ მობაილი აღარ აირიოს */
+  .image-container {
+    width: 50%;
+    max-width: 460px;
+    flex: 0 0 50%;
+    height: 380px; 
+    position: relative;
+  }
+
+  /* მარჯვენა ნახევარი დესკტოპზე */
+  .faq-content {
+    width: 50%;
+    max-width: 460px;
+    flex: 0 0 50%;
+    margin-top: 0;
+    padding-left: 20px;
+    padding-right: 40px; 
+    box-sizing: border-box;
+  }
+
+  .faq-title {
+    text-align: left;
+  }
+
+  /* დესკტოპის იმიჯების ბლოკი და ჩაჭრა */
+  .desktop-image-block {
+    display: block;
+    position: absolute;
+    top: -65px;    
+    bottom: -65px; 
+    left: 0;
+    right: 0;
+    overflow: hidden; 
+    border-radius: 23px 0 0 23px; 
+  }
+
+  /* მთავარი ილუსტრაცია (ქალი კომპიუტერით) */
+  .desktop-image-block .desktop-only-img:nth-child(1) {
+    position: absolute;
+    top: 50%;
+    left: -80px; 
+    transform: translateY(-50%);
+    width: 472px;
+    max-width: none;
+    height: auto;
+    z-index: 2; 
+  }
+
+  /* უკანა ფონი (დიდი პატერნი) */
+  .desktop-image-block .desktop-only-img:nth-child(2) {
+    position: absolute;
+    top: 180px;
+    left: -580px; 
+    transform: translateY(-50%);
+    width: 960px;
+    max-width: none;
+    height: auto;
+    z-index: 1; 
+  }
+
+  /* ნარინჯისფერი ყუთი (Box) */
+  .box-img {
+    display: block;
+    position: absolute;
+    top: 240px;
+    left: -93px; 
+    transform: translateY(-50%);
+    width: 191px;
+    height: auto;
+    z-index: 20; 
+  }
+} /* მედია ქუერის დასასრული (ახლა უკვე სწორ ადგილასაა) */
