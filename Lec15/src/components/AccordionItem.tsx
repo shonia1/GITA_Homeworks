@@ -16,10 +16,11 @@ export default function AccordionItem({
   return (
     <div className="accordion-item">
       <button
+        type="button"
         className={`accordion-question ${isOpen ? "active" : ""}`}
         onClick={onToggle}
       >
-        <h2>{question}</h2>
+        {question}
         <img src={arrowImg} alt="arrow" className="arrow-icon" />
       </button>
       {isOpen && <p className="accordion-answer">{answer}</p>}

@@ -121,7 +121,7 @@ body {
   box-sizing: border-box;
 }
 
-.accordion-question h2 {
+.accordion-question {
   margin: 0;
   font-size: 14px;
   font-weight: 400;
@@ -133,11 +133,11 @@ body {
   overflow-wrap: break-word;
 }
 
-.accordion-question:hover h2 {
+.accordion-question:hover {
   color: #f47b56;
 }
 
-.accordion-question.active h2 {
+.accordion-question.active {
   font-weight: 700;
   color: #1e1f36;
 }
