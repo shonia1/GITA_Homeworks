@@ -22,11 +22,11 @@ body {
 .faq-card {
   background-color: #ffffff;
   width: 327px;
-  min-height: auto; /* 🛑 ვცვლით auto-ზე, რომ სიმაღლე ტექსტთან ერთად გაიზარდოს */
+  height: 550px;
   border-radius: 23px;
   box-shadow: 0px 50px 50px -20px rgba(53, 18, 122, 0.5);
   padding: 24px;
-  /* 🛑 ვასწორებთ მარჟინებს: ზემოდან 140px (სურათისთვის), ქვემოდან 60px, რომ ბოლოში ფონი გამოჩნდეს */
+
   margin: 140px auto 60px auto;
   display: flex;
   flex-direction: column;
@@ -39,7 +39,7 @@ body {
    ========================================================================== */
 .image-container {
   position: relative;
-  width: 100%; /* 🛑 მობაილზე იკავებს სრულ სიგანეს, რომ არ აირიოს */
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -167,7 +167,6 @@ body {
    4. დესკტოპის კონფიგურაცია (Media Query)
    ========================================================================== */
 @media (min-width: 992px) {
-  /* 🛑 დესკტოპზე body-ს ვაბრუნებთ იდეალურ ჰორიზონტალურ და ვერტიკალურ ცენტრში */
   body {
     flex-direction: row;
     justify-content: center;
