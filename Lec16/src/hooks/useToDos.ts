@@ -1,8 +1,10 @@
 import { useState } from "react";
-import type { ToDo } from "../types"; 
+import type { ToDo } from "../types";
 
 export function useToDos() {
+  // დავალებების მასივის სტეიტი
   const [tasks, setTasks] = useState<ToDo[]>([]);
+  // ინპუტის ტექსტის სტეიტი
   const [inputValue, setInputValue] = useState<string>("");
 
   //დავალების დამატების ფუნქცია
@@ -20,6 +22,7 @@ export function useToDos() {
       day: "numeric",
     });
 
+    // ახალი დავალების ობიექტის შექმნა
     const toDo: ToDo = {
       id: Date.now(),
       title: inputValue,
@@ -27,7 +30,9 @@ export function useToDos() {
       isComplated: false,
     };
 
+    // ახალი ტასკი დაემატება მასივის დასაწყისში
     setTasks([toDo, ...tasks]);
+    // ინპუტის ველის გასუფთავება
     setInputValue("");
   };
 
@@ -45,6 +50,7 @@ export function useToDos() {
     );
   };
 
+  // ვაბრუნებთ სტეიტებსა და ფუნქციებს კომპონენტებში გამოსაყენებლად
   return {
     tasks,
     inputValue,

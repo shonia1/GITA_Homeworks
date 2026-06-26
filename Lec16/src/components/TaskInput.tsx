@@ -6,6 +6,7 @@ interface TaskInputProps {
   onAddTask: () => void;
 }
 
+//TaskInput კომპონენტი — მოიცავს ტექსტის შესაყვან ველს და დამატების (+) ღილაკს
 export function TaskInput({ inputValue, setInputValue, onAddTask }: TaskInputProps) {
   return (
     <div className="input-section">
@@ -18,6 +19,8 @@ export function TaskInput({ inputValue, setInputValue, onAddTask }: TaskInputPro
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
+
+      {/* ღილაკი გათიშულია თუ ინპუტი ცარიელია ან მხოლოდ სფეისებია ჩაწერილი */}
       <button
         className="add-btn"
         disabled={inputValue.trim() === ""}
