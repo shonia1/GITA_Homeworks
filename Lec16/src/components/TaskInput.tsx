@@ -7,13 +7,19 @@ interface TaskInputProps {
 }
 
 //TaskInput კომპონენტი — მოიცავს ტექსტის შესაყვან ველს და დამატების (+) ღილაკს
-export function TaskInput({ inputValue, setInputValue, onAddTask }: TaskInputProps) {
+export function TaskInput({
+  inputValue,
+  setInputValue,
+  onAddTask,
+}: TaskInputProps) {
   return (
     <div className="input-section">
       <span>
         <img className="status-button" src={vector} alt="complete" />
       </span>
       <input
+        id="task-note-input"
+        name="task-note"
         className="task-input"
         placeholder="Note"
         value={inputValue}
