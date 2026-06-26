@@ -17,6 +17,7 @@ body {
 }
 
 .app-header {
+  background-image: url("./assets/header-bg.png");
   height: 200px;
   background-size: cover;
   background-position: center;
@@ -63,10 +64,12 @@ body {
   padding-left: 15px;
 }
 
-.vector-img {
-  width: 20px; /* შეცვალე ზომა დიზაინის მიხედვით (მაგ. 18px ან 20px) */
-  height: 20px;
-  object-fit: contain;
+.task-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .task-input {
@@ -83,6 +86,7 @@ body {
 .task-input::placeholder {
   color: #b0b0b0;
 }
+
 .add-btn {
   background-color: #00ebd4;
   color: white;
@@ -99,29 +103,37 @@ body {
   cursor: not-allowed;
 }
 
-.task-card {
+.task-info {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 5px;
-  border-bottom: 1px solid #f0f0f0;
+  flex-direction: column;
+  gap: 8px; 
+  flex: 1;
+}
+
+.task-title {
+  font-size: 16px;
+  margin: 0;
+  color: #333;
+}
+
+.task-date {
+  font-size: 12px;
+  color: #a0a0a0; 
+  margin: 0;
 }
 
 .delete-button,
-.status-button {
+.status-button{
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
+  margin: 5px;
   display: flex;
   align-items: center;
-}
-
-.trash-icon,
-.status-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
+  width: 25px;
+  height: 25px;
+  
 }
 
 .task-card:last-child {
