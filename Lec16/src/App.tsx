@@ -1,5 +1,8 @@
 import "./App.css";
 import { useState } from "react";
+import vector from "./assets/Vector.svg";
+import circle from "./assets/circle-icon.svg";
+import trash from "./assets/trash-icon.svg";
 
 interface ToDo {
   id: number;
@@ -41,15 +44,18 @@ function App() {
   return (
     <div className="app-container">
       <div className="input-section">
+        <span>
+          <img className="vector-img" src={vector} alt="vector" />
+        </span>
         <input
           className="task-input"
-          placeholder=""
+          placeholder="Note"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
         {/* დამატების ღილაკი */}
         <button
-          className="add-button"
+          className="add-btn"
           disabled={inputValue.trim() === ""}
           onClick={handleAddTask}
         >
@@ -59,7 +65,7 @@ function App() {
       {tasks.map((el) => (
         <div className="task-card" key={el.id}>
           <p>{el.id}</p>
-          <p className={`task-title ${el.isComplated ? "completed" : ""}`}>
+          <p className={`task-title ${el.isComplated ? "complated" : ""}`}>
             {el.title}
           </p>
           <p className="task-date">{el.date}</p>
@@ -67,13 +73,17 @@ function App() {
             className="delete-button"
             onClick={() => handleDeleteTask(el.id)}
           >
-            x
+            <img className="trash-icon" src={trash} alt="del" />
           </button>
           <button
             className="status-button"
             onClick={() => handleToggleStatus(el.id)}
           >
-            {el.isComplated ? "🟢" : "⚪"}
+            {el.isComplated ? (
+              <img className="status-icon" src={vector} alt="completed" />
+            ) : (
+              <img className="status-icon" src={circle} alt="pending" />
+            )}
           </button>
         </div>
       ))}
