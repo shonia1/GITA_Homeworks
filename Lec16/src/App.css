@@ -144,3 +144,39 @@ body {
   text-decoration: line-through;
   color: #b0b0b0;
 }
+
+/* მობილური მოწყობილობებისთვის */
+@media (max-width: 480px) {
+  body {
+    align-items: flex-start; 
+    background-color: white;
+  }
+
+  .app-container {
+    max-width: 90%; 
+    min-height: 100vh;
+    border-radius: 0; 
+    box-shadow: none;
+    padding: 15px;
+  }
+
+  .app-header {
+    border-radius: 0; 
+    margin: -15px -15px 20px -15px;
+    height: 180px;
+  }
+
+  .current-time {
+    font-size: 30px; 
+  }
+
+  .task-input {
+    font-size: 15px;
+    padding: 12px 12px 12px 8px;
+  }
+
+  .add-btn {
+    padding: 0 16px;
+  }
+}
+
