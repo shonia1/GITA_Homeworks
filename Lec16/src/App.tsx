@@ -13,6 +13,7 @@ interface ToDo {
 }
 
 function App() {
+  useEffect(() => {document.title = "To Do App"}, [])
   const [tasks, setTasks] = useState<ToDo[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   //დავალების დამატების ფუნქცია
