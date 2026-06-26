@@ -1,8 +1,9 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import vector from "./assets/Vector.svg";
 import circle from "./assets/circle-icon.svg";
 import trash from "./assets/trash-icon.svg";
+import headerBg from "./assets/header-bg.png";
 
 interface ToDo {
   id: number;
@@ -41,8 +42,42 @@ function App() {
     });
     setTasks(updatedTasks);
   };
+  //მიმდინარე დორის სტეიტი
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    //დროის განახლება ყოველ წამში
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    //ფუნქციის გასუფთავება როცა კომპონენტი დაიხურება
+    return () => clearInterval(timer);
+  }, []);
+
+  //დროის დორმატირება
+  const formattedTime = currentTime.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  //თარიღის ფრმატირება
+  const formattedDate = currentTime.toLocaleDateString("en-US", {
+    weekday: "short",
+    day: "numeric",
+  });
+
   return (
     <div className="app-container">
+      <div
+        className="app-header"
+        style={{ backgroundImage: `url(${headerBg})` }}
+      >
+        <div className="header-overlay">
+          <span className="current-date">{formattedDate}</span>
+          <h1 className="current-time">{formattedTime}</h1>
+        </div>
+      </div>
       <div className="input-section">
         <span>
           <img className="vector-img" src={vector} alt="vector" />
