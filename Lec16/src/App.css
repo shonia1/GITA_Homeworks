@@ -1,0 +1,102 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fafafa;
+  margin: 0;
+  font-family: sans-serif;
+}
+.app-container {
+  max-width: 400px;
+  width: 100%;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.input-section {
+  display: flex;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.input-section span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 15px;
+}
+
+.vector-img {
+  width: 20px; /* შეცვალე ზომა დიზაინის მიხედვით (მაგ. 18px ან 20px) */
+  height: 20px;
+  object-fit: contain;
+}
+
+.task-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  color: lightgray;
+  background: transparent;
+  padding: 15px 15px 15px 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.task-input::placeholder {
+  color: #b0b0b0;
+}
+.add-btn {
+  background-color: #00ebd4;
+  color: white;
+  border: none;
+  outline: none;
+  padding: 0 20px;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-btn:disabled {
+  background-color: #d8d8d8;
+  cursor: not-allowed;
+}
+
+.task-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.delete-button,
+.status-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.trash-icon,
+.status-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.task-card:last-child {
+  border-bottom: none;
+}
+
+.complated {
+  text-decoration: line-through;
+  color: #b0b0b0;
+}
