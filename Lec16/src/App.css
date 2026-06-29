@@ -1,100 +1,117 @@
+/* ==========================================================================
+   1. გლობალური სტილები და ბაზა
+   ========================================================================== */
 body {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #fafafa;
+  background-color: #e5e5e5; /* ფიგმას ძირითადი ფონი */
   margin: 0;
-  font-family: sans-serif;
-}
-.app-container {
-  max-width: 400px;
-  width: 100%;
-  background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  font-family: 'Inter', sans-serif; /* მაკეტის ოფიციალური ფონტი */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* დეველოპმენტისთვის აუცილებელი ყუთის მოდელი */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   2. მთავარი კონტეინერი (Widget)
+   ========================================================================== */
+.app-container {
+  width: 390px; /* ზუსტი სიგანე ფიგმიდან */
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.04); /* რბილი, დახვეწილი ჩრდილი */
+  padding: 0 25px 25px 25px; /* ზემოდან 0 (ჰედერის გამო), გვერდებიდან 25px */
+}
+
+/* ==========================================================================
+   3. ჰედერი (Header & Date/Time Overlay)
+   ========================================================================== */
 .app-header {
-  height: 200px;
+  height: 202px; /* ზუსტი სიმაღლე ფიგმიდან */
   background-size: cover;
   background-position: center;
   position: relative;
-  margin: -20px -20px 20px -20px;
+  margin: 0 -25px 32px -25px; /* კონტეინერის კიდეებზე მიბჯენა და ქვედა დაშორება */
   border-radius: 20px 20px 0 0;
   overflow: hidden;
 }
 
 .header-overlay {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  text-align: right;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  bottom: 24px;
+  left: 25px; /* ტექსტი გადავიდა მარცხნივ მაკეტის მიხედვით */
+  text-align: left;
+  color: #ffffff;
 }
 
 .current-date {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+  opacity: 0.8; /* ოდნავ მქრქალი თეთრი */
 }
 
 .current-time {
-  font-size: 36px;
-  font-weight: bold;
+  font-size: 44px;
+  font-weight: 500;
   margin: 0;
+  letter-spacing: -1px; /* ასოებს შორის შეკუმშვა ფიგმასავით */
 }
 
+/* ==========================================================================
+   4. ინპუტის სექცია (Task Input)
+   ========================================================================== */
 .input-section {
   display: flex;
-  background-color: #f5f5f5;
+  height: 52px; /* ფიგმას ზუსტი სიმაღლე */
+  background-color: #f2f2f2; /* მაკეტის ნაცრისფერი */
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 32px; /* დაშორება სიამდე */
 }
 
 .input-section span {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-left: 15px;
-}
-
-.task-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 5px;
-  border-bottom: 1px solid #f0f0f0;
+  padding-left: 16px;
 }
 
 .task-input {
   flex: 1;
   border: none;
   outline: none;
-  color: lightgray;
   background: transparent;
-  padding: 15px 15px 15px 10px;
-  font-size: 16px;
-  color: #333;
+  padding: 0 16px;
+  font-size: 14px;
+  color: #333333;
 }
 
 .task-input::placeholder {
-  color: #b0b0b0;
+  color: #c4c4c4; /* ზუსტი ნაცრისფერი ფერი პლეისჰოლდერისთვის */
 }
 
 .add-btn {
-  background-color: #00ebd4;
-  color: white;
+  background-color: #2f80ed; /* ფიგმას საფირმო ლურჯი (Primary) */
+  color: #ffffff;
   border: none;
   outline: none;
   padding: 0 20px;
-  font-size: 22px;
+  font-size: 24px;
+  font-weight: 400;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background-color 0.2s ease;
+}
+
+.add-btn:hover {
+  background-color: #1b6fd1; /* ჰოვერ ეფექტი */
 }
 
 .add-btn:disabled {
@@ -102,17 +119,34 @@ body {
   cursor: not-allowed;
 }
 
+/* ==========================================================================
+   5. თასქების სია (Task Items)
+   ========================================================================== */
+.task-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0; /* გვერდებზე 0, რადგან მშობელ კონტეინერს აქვს 25px */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.task-card:last-child {
+  border-bottom: none; /* ბოლო ელემენტს ხაზი არ სჭირდება */
+}
+
 .task-info {
   display: flex;
   flex-direction: column;
-  gap: 8px; 
+  gap: 4px; 
   flex: 1;
 }
 
 .task-title {
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 500;
   margin: 0;
-  color: #333;
+  color: #333333;
+  line-height: 1.4;
 }
 
 .task-date {
@@ -121,61 +155,61 @@ body {
   margin: 0;
 }
 
+/* ხატულების და ღილაკების სტილები */
 .delete-button,
-.status-button{
+.status-button {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  margin: 5px;
+  margin: 0 4px;
   display: flex;
   align-items: center;
-  width: 25px;
-  height: 25px;
-  
+  justify-content: center;
+  width: 24px;
+  height: 24px;
 }
 
-.task-card:last-child {
-  border-bottom: none;
-}
-
+/* შესრულებული თასქის ვიზუალი */
 .complated {
   text-decoration: line-through;
-  color: #b0b0b0;
+  color: #c4c4c4; /* მაკეტის მიხედვით დასუსტებული ფერი */
 }
 
-/* მობილური მოწყობილობებისთვის */
+/* ==========================================================================
+   6. რესპონსივი (მობილური ეკრანები)
+   ========================================================================== */
 @media (max-width: 480px) {
   body {
     align-items: flex-start; 
-    background-color: white;
+    background-color: #ffffff;
   }
 
   .app-container {
-    max-width: 90%; 
+    width: 100%;
+    max-width: 100%;
     min-height: 100vh;
     border-radius: 0; 
     box-shadow: none;
-    padding: 15px;
+    padding: 0 20px 20px 20px;
   }
 
   .app-header {
     border-radius: 0; 
-    margin: -15px -25px 20px -25px;
+    margin: 0 -20px 24px -20px;
     height: 180px;
   }
 
+  .header-overlay {
+    left: 20px;
+    bottom: 20px;
+  }
+
   .current-time {
-    font-size: 30px; 
+    font-size: 38px; 
   }
 
-  .task-input {
-    font-size: 15px;
-    padding: 12px 12px 12px 8px;
-  }
-
-  .add-btn {
-    padding: 0 16px;
+  .input-section {
+    margin-bottom: 24px;
   }
 }
-
