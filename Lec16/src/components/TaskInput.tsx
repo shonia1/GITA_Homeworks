@@ -13,27 +13,29 @@ export function TaskInput({
   onAddTask,
 }: TaskInputProps) {
   return (
-    <div className="input-section">
-      <span>
-        <img className="status-button" src={vector} alt="complete" />
-      </span>
-      <input
-        id="task-note-input"
-        name="task-note"
-        className="task-input"
-        placeholder="Note"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
+    <form>
+      <div className="input-section">
+        <span>
+          <img className="status-button" src={vector} alt="complete" />
+        </span>
+        <input
+          id="task-note-input"
+          name="task-note"
+          className="task-input"
+          placeholder="Note"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
 
-      {/* ღილაკი გათიშულია თუ ინპუტი ცარიელია ან მხოლოდ სფეისებია ჩაწერილი */}
-      <button
-        className="add-btn"
-        disabled={inputValue.trim() === ""}
-        onClick={onAddTask}
-      >
-        +
-      </button>
-    </div>
+        {/* ღილაკი გათიშულია თუ ინპუტი ცარიელია ან მხოლოდ სფეისებია ჩაწერილი */}
+        <button
+          className="add-btn"
+          disabled={inputValue.trim() === ""}
+          onClick={onAddTask}
+        >
+          +
+        </button>
+      </div>
+    </form>
   );
 }
