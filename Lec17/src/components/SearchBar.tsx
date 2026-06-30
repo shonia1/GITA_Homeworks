@@ -17,7 +17,7 @@ export default function SearchBar({
         type="text"
         value={searchQuery}
         className="search-bar"
-        placeholder="ჩაწერეთ საძიებო სახელი ..."
+        placeholder="ჩაწერეთ მომხმარებლის სახელი ..."
         onChange={(e) => setSearchQuery(e.target.value)}
       />
     </div>
