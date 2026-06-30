@@ -7,9 +7,9 @@ body {
 
 /* მთავარი კონტეინერი, რომელიც მართავს ბარათების განლაგებას */
 .cards-container {
- display: grid;
-  grid-template-columns: repeat(3, 11fr); 
-  gap: 24px; 
+  display: grid;
+  grid-template-columns: repeat(3, 11fr);
+  gap: 24px;
   padding: 20px;
 }
 
@@ -21,7 +21,9 @@ body {
   margin: 0; /* ვაუქმებთ ul-ის სტანდარტულ margin-ს */
   list-style-type: none; /* ვაშორებთ სიის წერტილებს (dots) */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ნაზი ჩრდილი */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* ეფექტი ბარათზე მაუსის მიტანისას (Hover) */
@@ -55,4 +57,11 @@ body {
 .user-card a:hover {
   text-decoration: underline;
   color: #2980b9;
+}
+
+.user-not-found {
+  display: block;
+  font-size: large;
+  font-weight: 600;
+  text-align: center;
 }
