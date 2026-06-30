@@ -6,8 +6,10 @@ import "./App.css";
 import SearchBar from "./components/SearchBar";
 
 function App() {
+  // მომხმარებლების მასივი, სადაც მოგვიანებით შევინახავთ API-დან მიღებულ მონაცემებს
   const [users, setUsers] = useState<IUser[]>([]);
 
+  // კომპონენტის ჩატვირთვის შემდეგ ვიღებთ მომხმარებლებს JSONPlaceholder API-დან
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await axios.get(
@@ -18,8 +20,10 @@ function App() {
     fetchUsers();
   }, []);
 
+  // საძიებო ტექსტი, რომელიც გამოიყენება მომხმარებლების გაფილტვრისთვის
   const [searchQuery, setSearchQuery] = useState("");
 
+  // მომხმარებლების ფილტრაცია სახელის მიხედვით, რათა მხოლოდ შესაბამისი შედეგები გამოჩნდეს
   const filteredUsers = users.filter((user) =>
     user.name.trim().toLowerCase().includes(searchQuery.trim().toLowerCase()),
   );
@@ -30,7 +34,7 @@ function App() {
       {filteredUsers.length > 0 ? (
         <CardComponent users={filteredUsers} />
       ) : (
-        <p className="user-not-found">მომმარებელი ვერ მოიძებნა !</p>
+        <p className="user-not-found">მომხმარებელი ვერ მოიძებნა !</p>
       )}
     </>
   );
