@@ -11,6 +11,7 @@ function App() {
 
   // კომპონენტის ჩატვირთვის შემდეგ ვიღებთ მომხმარებლებს JSONPlaceholder API-დან
   useEffect(() => {
+    document.title = "Users";
     const fetchUsers = async () => {
       const response = await axios.get(
         "https://jsonplaceholder.typicode.com/users",
