@@ -1,0 +1,58 @@
+body {
+  background-color: bisque;
+  margin: 0;
+  padding: 24px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* მთავარი კონტეინერი, რომელიც მართავს ბარათების განლაგებას */
+.cards-container {
+ display: grid;
+  grid-template-columns: repeat(3, 11fr); 
+  gap: 24px; 
+  padding: 20px;
+}
+
+/* თითოეული ბარათის სტილი */
+.user-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0; /* ვაუქმებთ ul-ის სტანდარტულ margin-ს */
+  list-style-type: none; /* ვაშორებთ სიის წერტილებს (dots) */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ნაზი ჩრდილი */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ეფექტი ბარათზე მაუსის მიტანისას (Hover) */
+.user-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* ბარათის შიგნით თითოეული ხაზის სტილი */
+.user-card li {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #4a4a4a;
+  line-height: 1.4;
+}
+
+/* მნიშვნელოვანი ტექსტის სტილი */
+.user-card li strong {
+  color: #2c3e50;
+  display: inline-block;
+  width: 120px;
+}
+
+/* ბმულების სტილი */
+.user-card a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.user-card a:hover {
+  text-decoration: underline;
+  color: #2980b9;
+}
