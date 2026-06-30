@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import CardComponent from "./components/CardComponent";
 import type { IUser } from "./interfaces/IUser";
 import axios from "axios";
-import "./App.css"
+import "./App.css";
+import SearchBar from "./components/SearchBar";
 
 function App() {
   const [users, setUsers] = useState<IUser[]>([]);
@@ -17,9 +18,20 @@ function App() {
     fetchUsers();
   }, []);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredUsers = users.filter((user) =>
+    user.name.trim().toLowerCase().includes(searchQuery.trim().toLowerCase()),
+  );
+
   return (
     <>
-      <CardComponent users = {users}/>
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      {filteredUsers.length > 0 ? (
+        <CardComponent users={filteredUsers} />
+      ) : (
+        <p className="user-not-found">მომმარებელი ვერ მოიძებნა !</p>
+      )}
     </>
   );
 }
