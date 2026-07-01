@@ -52,7 +52,8 @@ export default function App() {
       <ul className="product-list">
         {filteredProducts.map((product) => (
           <li key={product.id} className="product-item">
-            {product.title} - {product.price}$
+            <span className="product-title">{product.title}</span>
+            <span className="product-price">${product.price}</span>
           </li>
         ))}
       </ul>
