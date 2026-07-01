@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import type { IProduct } from "./IProduct";
 import "./App.css";
-import Filter from "./components/filter";
+import Filter from "./components/Filter";
 
 // მთავარი კომპონენტი, რომელიც პროდუქციის სიას აჩვენებს
 export default function App() {
@@ -14,11 +14,11 @@ export default function App() {
     document.title = "Product Catalog";
     const fetchProducts = async () => {
       // API-დან ვიღებთ პროდუქციის სიას
-      const response = await axios.get<IProduct[]>(
+      const response = await axios.get<IProduct>(
         "https://fakestoreapi.com/products",
       );
       // მიღებულ მონაცემებს ვუშვებთ state-ში
-      setProductData(response.data);
+      setProductData([response.data]);
     };
 
     fetchProducts();
