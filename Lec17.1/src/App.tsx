@@ -38,20 +38,24 @@ export default function App() {
   );
 
   return (
-    <div>
+    <div className="app-container">
+      {/* ფილტრის კომპონენტი, რომელიც ძებნას და კატეგორიას მართავს */}
       <Filter
+        productData={productData}
         filterBar={filterBar}
         setFilterBar={setFilterBar}
         filterCategory={filterCategory}
         setFilterCategory={setFilterCategory}
       />
 
-      {/* ფილტრირებული პროდუქციების ჩვენება */}
-      {filteredProducts.map((product) => (
-        <li key={product.id}>
-          {product.title} - {product.price}$
-        </li>
-      ))}
+      {/* ფილტრირებული პროდუქციების სიის ჩვენება */}
+      <ul className="product-list">
+        {filteredProducts.map((product) => (
+          <li key={product.id} className="product-item">
+            {product.title} - {product.price}$
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
