@@ -1,0 +1,139 @@
+/* --- გლობალური ცვლადები (ფერები, ზომები) --- */
+:root {
+  --bg-color: #f4f7f6;
+  --card-bg: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --accent-color: #4f46e5;
+  --accent-hover: #4338ca;
+  --border-color: #e5e7eb;
+  --border-radius: 12px;
+  --transition-speed: 0.3s;
+}
+
+/* --- გლობალური სტილები --- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- მთავარი კონტეინერი (App.tsx) --- */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* --- ფილტრების პანელი (Filter.tsx) --- */
+.filter-panel {
+  display: flex;
+  gap: 16px;
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-bottom: 40px;
+  border: 1px solid var(--border-color);
+}
+
+/* ინპუტების საერთო სტილი */
+.search-bar,
+.select-category {
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #fafafa;
+  color: var(--text-primary);
+  outline: none;
+  transition: all var(--transition-speed) ease;
+}
+
+/* სელექტორი */
+.select-category {
+  flex: 1;
+  cursor: pointer;
+}
+
+/* ძებნის ველი (მეტ ადგილს იკავებს) */
+.search-bar {
+  flex: 2;
+}
+
+/* ფოკუსის ეფექტი ფილტრებზე */
+.search-bar:focus,
+.select-category:focus {
+  border-color: var(--accent-color);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* --- პროდუქტების სია --- */
+.product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* CSS Grid-ის დახმარებით ვქმნით რესპონსიულ ბადეს */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* --- პროდუქტის ბარათი --- */
+.product-item {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  cursor: pointer;
+}
+
+/* ჰოვერ ეფექტი ბარათზე (ზემოთ აწევა და ჩრდილის გაზრდა) */
+.product-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: #d1d5db;
+}
+
+.product-title {
+  color: var(--text-primary);
+}
+
+.product-price {
+  color: var(--accent-color);
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+/* --- ადაპტურობა (მობილური ვერსიისთვის) --- */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 20px 15px;
+  }
+  
+  .filter-panel {
+    flex-direction: column; /* მობილურში ფილტრები ერთმანეთის ქვეშ ჩამოვა */
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .search-bar,
+  .select-category {
+    width: 100%;
+    flex: none;
+    box-sizing: border-box;
+  }
+}
