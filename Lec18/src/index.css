@@ -1,0 +1,477 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+
+:root {
+  /* Light Mode Colors */
+  --primary: #0079ff;
+  --primary-hover: #60abff;
+  --text-heading: #2b3442;
+  --text-body: #4b6a9b;
+  --text-muted: #697c9a;
+  --bg-body: #f6f8ff;
+  --bg-card: #fefefe;
+  --bg-stats: #f6f8ff;
+  --shadow: 0px 16px 30px -10px rgba(70, 96, 187, 0.2);
+}
+
+:root.dark-mode {
+  /* Dark Mode Colors */
+  --primary: #0079ff;
+  --primary-hover: #90c3ff;
+  --text-heading: #ffffff;
+  --text-body: #ffffff;
+  --text-muted: #ffffff;
+  --bg-body: #141d2f;
+  --bg-card: #1e2a47;
+  --bg-stats: #141d2f;
+  --shadow: none;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-body);
+  font-family: "Space Mono", monospace;
+  font-size: 15px;
+  line-height: 25px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* მთავარი კონტეინერის ცენტრირება */
+.app {
+  width: 100%;
+  max-width: 730px;
+}
+
+/* ჰედერი: devfinder და თემის გადამრთველი */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.app-title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 38px;
+  color: var(--text-heading);
+}
+
+.app-theme-button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: "Space Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.app-theme-button:hover {
+  color: var(--text-heading);
+}
+
+/* ძებნის ფორმა */
+.search-form {
+  background-color: var(--bg-card);
+  border-radius: 15px;
+  padding: 9px 9px 9px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-grow: 1;
+}
+
+.search-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.search-form-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: "Space Mono", monospace;
+  font-size: 18px;
+  color: var(--text-heading);
+  outline: none;
+}
+
+.search-form-input::placeholder {
+  color: var(--text-body);
+  opacity: 0.8;
+}
+
+.search-form-button {
+  background-color: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-family: "Space Mono", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.search-form-button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* პროფილის ბარათი (Grid Layout-ით ორ სვეტად) */
+.profile-card {
+  background-color: var(--bg-card);
+  border-radius: 15px;
+  padding: 48px;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 117px 1fr;
+  column-gap: 37px;
+}
+
+.profile-card-photo {
+  width: 117px;
+  height: 117px;
+  border-radius: 50%;
+}
+
+.profile-right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* პროფილის ზედა ნაწილი (სახელი, იუზერნეიმი, თარიღი) */
+.profile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.profile-title-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-card-name {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 33px;
+  color: var(--text-heading);
+}
+
+.profile-card-handle {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.profile-card-handle:hover {
+  text-decoration: underline;
+}
+
+.profile-card-joined {
+  font-size: 15px;
+  color: var(--text-muted);
+  padding-top: 6px;
+}
+
+.profile-card-bio {
+  font-size: 15px;
+  color: var(--text-body);
+  line-height: 25px;
+  margin-bottom: 32px;
+}
+
+.profile-card-bio.no-bio {
+  opacity: 0.75;
+}
+
+/* სტატისტიკის პანელი */
+.profile-card-stats {
+  background-color: var(--bg-stats);
+  border-radius: 10px;
+  padding: 15px 32px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 38px;
+  list-style: none;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-body);
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 33px;
+  color: var(--text-heading);
+}
+
+/* ქვედა ბმულები (2x2 ბადე) */
+.profile-card-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 20px;
+  column-gap: 20px;
+  list-style: none;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-body);
+  font-size: 15px;
+}
+
+.link-item img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* თუ რეჟიმი თეთრია, ხატულებს ოდნავ ვამუქებთ, თუ ბნელია - ვათეთრებთ საჭიროებისამებრ */
+:root.dark-mode .link-item img {
+  filter: brightness(0) invert(1);
+}
+
+.link-item a {
+  color: var(--text-body);
+  text-decoration: none;
+}
+
+.link-item a:hover {
+  text-decoration: underline;
+}
+
+/* ხელმიუწვდომელი ლინკების სტილი */
+.link-item.disabled {
+  opacity: 0.5;
+}
+
+/* ტაბლეტის რეზოლუცია (748px) */
+@media screen and (max-width: 748px) {
+  body {
+    padding: 24px 16px;
+  }
+
+  .app {
+    max-width: 100%;
+  }
+
+  .app-header {
+    margin-bottom: 32px;
+  }
+
+  .app-title {
+    font-size: 22px;
+    line-height: 33px;
+  }
+
+  .search-form {
+    padding: 9px 9px 9px 24px;
+    margin-bottom: 20px;
+  }
+
+  .profile-card {
+    grid-template-columns: 100px 1fr;
+    column-gap: 32px;
+    padding: 32px;
+  }
+
+  .profile-card-photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-card-name {
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  .profile-card-handle {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .profile-card-stats {
+    padding: 12px 24px;
+    margin-bottom: 32px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    line-height: 18px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  .profile-card-links {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 16px;
+    column-gap: 16px;
+  }
+}
+
+/* სმარტფონის რეზოლუცია (375px) */
+@media screen and (max-width: 375px) {
+  body {
+    padding: 16px;
+  }
+
+  .app {
+    max-width: 100%;
+  }
+
+  .app-header {
+    margin-bottom: 24px;
+  }
+
+  .app-title {
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  .app-theme-button {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    gap: 8px;
+  }
+
+  .search-form {
+    padding: 8px 8px 8px 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .search-form-input {
+    font-size: 15px;
+  }
+
+  .search-form-button {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .profile-card {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .profile-card-photo {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 24px;
+  }
+
+  .profile-card-header {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .profile-title-info {
+    align-items: center;
+  }
+
+  .profile-card-name {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .profile-card-handle {
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .profile-card-joined {
+    font-size: 13px;
+    padding-top: 4px;
+  }
+
+  .profile-card-bio {
+    font-size: 13px;
+    line-height: 20px;
+    margin-bottom: 24px;
+  }
+
+  .profile-card-stats {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+    background-color: transparent;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .stat-value {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .profile-card-links {
+    grid-template-columns: 1fr;
+    row-gap: 12px;
+    column-gap: 0;
+  }
+
+  .link-item {
+    justify-content: center;
+    font-size: 13px;
+  }
+
+  .link-item img {
+    width: 18px;
+    height: 18px;
+  }
+}
