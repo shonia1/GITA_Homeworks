@@ -76,7 +76,7 @@ export default function App() {
 
   return (
     <main className="app">
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+      <Header darkMode={darkMode} setDarkMode={setDarkMode}/>
 
       <SearchForm
         handleSubmit={handleSubmit}
