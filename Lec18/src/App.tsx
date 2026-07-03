@@ -41,7 +41,7 @@ export default function App() {
   //სერჩ ბათონის გაჰენდვლა
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault(); 
-    if (searchQuery.trim().length < 0) return; // თუ ველი ცარიელია, არაფერს ვაკეთებთ
+    if (searchQuery.trim().length <= 0) return; // თუ ველი ცარიელია, არაფერს ვაკეთებთ
     
     fetchUser(searchQuery); // ვიძახებთ ძებნის ფუნქციას ჩაწერილი ტექსტით
   };
