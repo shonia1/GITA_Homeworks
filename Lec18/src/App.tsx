@@ -4,6 +4,7 @@ import type { IUser } from "./IUser";
 import "./index.css";
 import SearchForm from "./components/SearchForm";
 import ProfileCard from "./components/ProfileCard";
+import Header from "./components/Header";
 
 export default function App() {
   //სთეითები
@@ -75,25 +76,7 @@ export default function App() {
 
   return (
     <main className="app">
-      {/*ჰედერი*/}
-      <header className="app-header">
-        <h1 className="app-title">devfinder</h1>
-        <button
-          type="button"
-          className="app-theme-button"
-          onClick={() => setDarkMode(!darkMode)}
-        >
-          {darkMode ? (
-            <>
-              LIGHT <img src="/sun-icon.svg" alt="sun-icon" />
-            </>
-          ) : (
-            <>
-              DARK <img src="/moon-icon.svg" alt="moon-icon" />
-            </>
-          )}
-        </button>
-      </header>
+      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
       <SearchForm
         handleSubmit={handleSubmit}

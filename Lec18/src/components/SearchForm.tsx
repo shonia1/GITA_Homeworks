@@ -16,7 +16,7 @@ export default function SearchForm({
   setHasError,
 }: SearchFormProps) {
   return (
-    <div>
+    <>
       {/*ძებნის ფორმა*/}
       <form className="search-form" onSubmit={handleSubmit}>
         <div className="search-input-container">
@@ -45,6 +45,6 @@ export default function SearchForm({
           Search
         </button>
       </form>
-    </div>
+    </>
   );
 }
