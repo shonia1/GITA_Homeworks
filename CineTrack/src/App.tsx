@@ -63,23 +63,27 @@ function App() {
 
       {/* ფილმების სია */}
       <div className="app-container">
-        {moviesData.map((movie) => (
-          <div key={movie.id} className="movie-card">
-            {/* პოსტერის გამოსახულება */}
-            <img
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              alt={movie.title}
-              className="movie-poster"
-            />
-            {/* სათაური */}
-            <h1 className="movie-title">{movie.title}</h1>
-            {/* რეიტინგი (ერთი ტკილი) */}
-            <p className="movie-rating">{movie.vote_average.toFixed(1)}</p>
-            {/* გამოსვლის თარიღი */}
-            <p className="movie-release">{movie.release_date}</p>
-            <button className="watchlist-button">+ Add to Watchlist</button>
-          </div>
-        ))}
+        {loading ? (
+          <h2>Loading Movies ...</h2>
+        ) : (
+          moviesData.map((movie) => (
+            <div key={movie.id} className="movie-card">
+              {/* პოსტერის გამოსახულება */}
+              <img
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt={movie.title}
+                className="movie-poster"
+              />
+              {/* სათაური */}
+              <h1 className="movie-title">{movie.title}</h1>
+              {/* რეიტინგი (ერთი ტკილი) */}
+              <p className="movie-rating">{movie.vote_average.toFixed(1)}</p>
+              {/* გამოსვლის თარიღი */}
+              <p className="movie-release">{movie.release_date}</p>
+              <button className="watchlist-button">+ Add to Watchlist</button>
+            </div>
+          ))
+        )}
       </div>
     </main>
   );
