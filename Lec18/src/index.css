@@ -364,15 +364,18 @@ body {
 /* სმარტფონის რეალიზაცია (max-width: 375px) */
 @media screen and (max-width: 375px) {
   body {
-    padding: 16px;
+    padding: 12px; /* ოდნავ შევამცირეთ, რომ კონტენტს მეტი ადგილი დარჩეს */
   }
 
   .app {
+    width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
   }
 
   .app-header {
     margin-bottom: 24px;
+    padding: 0 4px; /* რომ ჰედერი სერჩბარის კიდეებს გაუსწორდეს */
   }
 
   .app-title {
@@ -386,54 +389,78 @@ body {
     gap: 8px;
   }
 
+  /* სერჩ ბარის ძირითადი ფიქსი */
   .search-form {
-    padding: 14px 12px 14px 16px;
-    min-height: 56px;
-    flex-wrap: wrap;
-    gap: 12px;
+    padding: 6px 6px 6px 12px; /* მაქსიმალურად შევკუმშეთ პადინგი */
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* არავითარ შემთხვევაში არ ჩამოვიდეს ღილაკი ახალ ხაზზე */
+    gap: 8px;
   }
 
   .search-input-container {
-    gap: 12px;
-    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: auto; /* აღარ იკავებს 100%-ს, რომ ღილაკს ადგილი დაუტოვოს */
+    flex-grow: 1; /* იკავებს მხოლოდ დარჩენილ თავისუფალ ადგილს */
+  }
+
+  /* სერჩის აიქონი მობილურზე ოდნავ პატარავდება */
+  .search-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .search-form-input {
     font-size: 13px;
-  }
-
-  .search-error {
-    font-size: 12px;
-    order: -1;
     width: 100%;
   }
 
-  .search-form-button {
-    padding: 8px 16px;
-    font-size: 12px;
+  /* "No results" ერორის ტექსტის პოზიციონირება აბსოლუტურად, რომ დიზაინი არ დაშალოს */
+  .search-error {
+    font-size: 11px;
+    position: absolute;
+    right: 90px; /* თავსდება პირდაპირ ღილაკის მარცხნივ */
+    font-weight: bold;
   }
 
+  .search-form-button {
+    padding: 10px 14px; /* უფრო კომპაქტური ღილაკი */
+    font-size: 12px;
+    min-width: fit-content;
+  }
+
+  /* პროფილის ბარათის ფიქსი */
   .profile-card {
-    grid-template-columns: 1fr;
-    column-gap: 0;
-    padding: 24px 20px;
+    display: flex; /* grid-ის ნაცვლად flex-ი მობილურზე უფრო მართვადია */
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px; /* შევამცირეთ გვერდითა პადინგები */
     text-align: center;
   }
 
   .profile-card-photo {
     width: 70px;
     height: 70px;
-    margin: 0 auto 24px;
+    margin: 0 auto 16px;
   }
 
   .profile-card-header {
+    display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 16px;
+    width: 100%;
   }
 
   .profile-title-info {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 4px;
   }
 
   .profile-card-name {
@@ -441,31 +468,61 @@ body {
     line-height: 24px;
   }
 
+  .profile-card-joined {
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
   .profile-card-bio {
     font-size: 13px;
     line-height: 20px;
     margin-bottom: 24px;
+    width: 100%;
   }
 
+  /* სტატისტიკის პანელის ბოქსი */
   .profile-card-stats {
+    display: flex;
     flex-direction: row;
     justify-content: space-around;
-    gap: 8px;
-    padding: 12px 0;
-    background-color: transparent;
+    width: 100%;
+    gap: 4px;
+    padding: 16px 8px;
+    box-sizing: border-box;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
   }
 
   .stat-value {
     font-size: 16px;
+    font-weight: bold;
   }
 
+  /* ლინკები თავსდება 1 სვეტად და იწევა მარცხნივ, რომ კითხვითი იყოს */
   .profile-card-links {
-    grid-template-columns: 1fr;
-    row-gap: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* მარცხნივ სწორება ტექსტებისთვის */
+    width: 100%;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 0;
   }
 
   .link-item {
-    justify-content: center;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     font-size: 13px;
+    text-align: left;
+    word-break: break-all; /* თუ ბლოგის ლინკი გრძელია, რომ არ გავარდეს ეკრანიდან */
   }
 }
