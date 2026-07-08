@@ -14,7 +14,13 @@ function App() {
   // მიღებული ფილმების სია API-დან
   const [moviesData, setMoviesData] = useState<IMovie[]>([]);
 
-  // ფილმების გამორკვევა: თუ query ცარიელია, ვიღებთ ტრენდინგ ფილმებს, სხვა შემთხვევაში - ძებნა
+  const [watchlist, setWatchlist] = useState<IMovie[]>(
+    JSON.parse(localStorage.getItem("watchlist") || "[]"),
+  );
+
+  const [watchlistTab, setWatchlistTab] = useState<"All" | "watchlist">("All");
+
+  //თუ query ცარიელია, ვიღებთ ტრენდინგ ფილმებს, სხვა შემთხვევაში - ძებნა
   const fetchMovies = async (query: string) => {
     const url = !query
       ? "https://api.themoviedb.org/3/trending/movie/week?api_key=662f38bcc130692e7689fe96ae5b3efd"
@@ -39,11 +45,30 @@ function App() {
     event.preventDefault();
     // თუ ძებნის ველი ცარიელია, არაფერს ვაკეთებთ
     if (searchQuery.trim().length === 0) return;
-
+    setWatchlistTab("All");
     setLoading(true);
     await fetchMovies(searchQuery);
     setLoading(false);
   };
+
+  function toggleWatchlist(movie: IMovie) {
+    const isAlreadyAdded = watchlist.some((item) => {
+      return item.id === movie.id;
+    });
+    if (isAlreadyAdded) {
+      const filteredWatchlist = watchlist.filter(
+        (item) => item.id !== movie.id,
+      );
+      setWatchlist(filteredWatchlist);
+      localStorage.setItem("watchlist", JSON.stringify(filteredWatchlist));
+    } else {
+      const addWatchlist = [...watchlist, movie];
+      localStorage.setItem("watchlist", JSON.stringify(addWatchlist));
+      setWatchlist(addWatchlist);
+    }
+  }
+
+  const moviesToShow = watchlistTab === "All" ? moviesData : watchlist;
 
   return (
     <main>
@@ -59,6 +84,16 @@ function App() {
         <button type="submit" disabled={loading}>
           {loading ? "Loading..." : "Search"}
         </button>
+        <button
+          type="button"
+          onClick={() =>
+            setWatchlistTab(watchlistTab === "All" ? "watchlist" : "All")
+          }
+        >
+          {watchlistTab === "All"
+            ? `Watchlist (${watchlist.length})`
+            : "All Movies"}
+        </button>
       </form>
 
       {/* ფილმების სია */}
@@ -66,7 +101,7 @@ function App() {
         {loading ? (
           <h2>Loading Movies ...</h2>
         ) : (
-          moviesData.map((movie) => (
+          moviesToShow.map((movie) => (
             <div key={movie.id} className="movie-card">
               {/* პოსტერის გამოსახულება */}
               <img
@@ -80,7 +115,16 @@ function App() {
               <p className="movie-rating">{movie.vote_average.toFixed(1)}</p>
               {/* გამოსვლის თარიღი */}
               <p className="movie-release">{movie.release_date}</p>
-              <button className="watchlist-button">+ Add to Watchlist</button>
+              <button
+                className="watchlist-button"
+                onClick={() => {
+                  toggleWatchlist(movie);
+                }}
+              >
+                {watchlist.some((item) => item.id === movie.id)
+                  ? "❤️ In Watchlist"
+                  : "+ Add to Watchlist"}
+              </button>
             </div>
           ))
         )}
