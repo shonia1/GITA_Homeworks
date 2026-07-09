@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
+// კალათის პროდუქტის ინტერფეისი
 interface CartItem {
   id: number;
   productName: string;
@@ -10,80 +11,258 @@ interface CartItem {
 }
 
 function App() {
-  const [isCartOpened, setIsCartOpened] = useState<boolean>(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [quantity, setQuantity] = useState<number>(0);
-  const [mainImageIndex, setMainImageIndex] = useState<number>(0);
+  // State ცვლადები
+  const [isCartOpened, setIsCartOpened] = useState<boolean>(false); // კალათის ფანჯრის სტატუსი (ღიაა/დახურულია)
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // კალათაში არსებული პროდუქტების სია
+  const [quantity, setQuantity] = useState<number>(0); // პროდუქტის ასარჩევი რაოდენობა
+  const [mainImageIndex, setMainImageIndex] = useState<number>(0); // მთავარი სურათის ინდექსი გალერეაში
+  const [isLightBoxOpen, setIsLightBoxOpen] = useState<boolean>(false); // ლაითბოქსის (გადიდებული სურათის) სტატუსი
 
+  // კალათაში პროდუქტის დამატების ფუნქცია
   const addCart = () => {
-    if(quantity === 0) return;
+    // თუ რაოდენობა 0-ია, ფუნქცია წყვეტს მუშაობა
+    if (quantity === 0) return;
 
+    // ახალი პროდუქტის ობიექტის შექმნა
     const newItem: CartItem = {
       id: 1,
       productName: "Fall Limited Edition Sneakers",
-      price: 125.00,
+      price: 125.0,
       quantity: quantity,
-      thumbnail: ""
-    }
+      thumbnail: "/thumb1.jpg",
+    };
 
-    const existingItem = cartItems.find((item) => item.id === newItem.id)
+    // ვამოწმებთ, უკვე ხომ არ არის ეს პროდუქტი კალათაში
+    const existingItem = cartItems.find((item) => item.id === newItem.id);
 
     if (existingItem) {
-      setCartItems(cartItems.map((item) => (
-        item.id === newItem.id
-        ? {...item, quantity : item.quantity + quantity}
-        : item
-      )))
+      // თუ არსებობს, უბრალოდ ვუმატებთ ახალ რაოდენობას არსებულს
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === newItem.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item,
+        ),
+      );
     } else {
-      setCartItems([...cartItems, newItem])
+      // თუ არ არსებობს, ვამატებთ ახალ პროდუქტს მასივში
+      setCartItems([...cartItems, newItem]);
     }
 
-    setQuantity(0)
-  }
+    // დამატების შემდეგ ვანულებთ შერჩეულ რაოდენობას
+    setQuantity(0);
+  };
+
+  // კალათიდან პროდუქტის წაშლის ფუნქცია აიდის მიხედვით
+  const removeItemFromCart = (id: number) => {
+    setCartItems(cartItems.filter((item) => item.id !== id));
+  };
+
+  // სურათების და მინიატურების მასივები
+  const images = ["/img1.jpg", "/img2.jpg", "/img3.jpg", "/img4.jpg"];
+  const thumbnails = [
+    "/thumb1.jpg",
+    "/thumb2.jpg",
+    "/thumb3.jpg",
+    "/thumb4.jpg",
+  ];
+
+  // შემდეგ სურათზე გადასვლის ლოგიკა
+  const nextImage = () => {
+    if (mainImageIndex === images.length - 1) {
+      setMainImageIndex(0); // თუ ბოლო სურათია, ვბრუნდებით პირველზე[cite: 1]
+    } else {
+      setMainImageIndex(mainImageIndex + 1); // წინააღმდეგ შემთხვევაში გადავდივართ შემდეგზე[cite: 1]
+    }
+  };
+
+  // წინა სურათზე დაბრუნების ლოგიკა
+  const prevImage = () => {
+    if (mainImageIndex === 0) {
+      setMainImageIndex(images.length - 1); // თუ პირველი სურათია, გადავდივართ ბოლოზე[cite: 1]
+    } else {
+      setMainImageIndex(mainImageIndex - 1); // წინააღმდეგ შემთხვევაში ვბრუნდებით უკან[cite: 1]
+    }
+  };
+
   return (
-    <>
-      <header>
-        <h1>Sneakers</h1>
-        <nav>
-          <ul>
-            <li>
-              <a href="collections">Collections</a>
+    <div className="app-container">
+      {/* ჰედერი და ნავიგაცია */}
+      <header className="app-header">
+        <h1 className="logo">Sneakers</h1>
+        <nav className="main-nav">
+          <ul className="nav-list">
+            <li className="nav-item">
+              <a href="collections" className="nav-link">
+                Collections
+              </a>
             </li>
-            <li>
-              <a href="men">Men</a>
+            <li className="nav-item">
+              <a href="men" className="nav-link">
+                Men
+              </a>
             </li>
-            <li>
-              <a href="women">Women</a>
+            <li className="nav-item">
+              <a href="women" className="nav-link">
+                Women
+              </a>
             </li>
-            <li>
-              <a href="about">About</a>
+            <li className="nav-item">
+              <a href="about" className="nav-link">
+                About
+              </a>
             </li>
-            <li>
-              <a href="contact">Contact</a>
+            <li className="nav-item">
+              <a href="contact" className="nav-link">
+                Contact
+              </a>
             </li>
           </ul>
         </nav>
-        <div>
-          <button onClick={() => setIsCartOpened(!isCartOpened)}>Cart</button>
-          <img src="" alt="cart-icon" />
+
+        {/* კალათის ღილაკი */}
+        <div className="cart-toggle-container">
+          <button
+            className="cart-toggle-btn"
+            onClick={() => setIsCartOpened(!isCartOpened)}
+          >
+            <img src={"icon-cart.svg"} alt="icon-cart" />
+          </button>
         </div>
+
+        {/* კალათის ჩამოსაშლელი ფანჯარა */}
         {isCartOpened && (
-          <div>
-            <h3>Cart</h3>
-            <hr />
-            {cartItems.length === 0 ? "Your cart is empty." : []}
+          <div className="cart-dropdown">
+            <h3 className="cart-title">Cart</h3>
+            <hr className="cart-divider" />
+            {cartItems.length === 0 ? (
+              <p className="cart-empty-msg">Your cart is empty.</p>
+            ) : (
+              <div className="cart-items-list">
+                {cartItems.map((item) => (
+                  <div key={item.id} className="cart-item">
+                    <img
+                      className="cart-item-img"
+                      src={"/thumb1.jpg"}
+                      alt={item.productName}
+                    />
+                    <div className="cart-item-details">
+                      <p className="cart-item-name">{item.productName}</p>
+                      <p className="cart-item-price">
+                        ${item.price.toFixed(2)} x {item.quantity}{" "}
+                        <strong>
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </strong>
+                      </p>
+                    </div>
+                    <button
+                      className="cart-item-delete-btn"
+                      onClick={() => {
+                        removeItemFromCart(item.id);
+                      }}
+                    >
+                      <img src={"/icon-delete.svg"} alt="delete" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </header>
 
-      <main>
-        <button onClick={() => {
-          if(quantity > 0)setQuantity(quantity - 1)
-        }}>-</button>
-        {quantity}
-        <button onClick={() => setQuantity(quantity + 1)}>+</button>
+      {/* მთავარი კონტენტი */}
+      <main className="app-main">
+        {/* რაოდენობის მართვის პანელი */}
+        <div className="quantity-controls">
+          <button
+            className="quantity-btn minus-btn"
+            onClick={() => {
+              if (quantity > 0) setQuantity(quantity - 1);
+            }}
+          >
+            <img src={"icon-minus.svg"} alt="minus" />
+          </button>
+          <span className="quantity-display">{quantity}</span>
+          <button
+            className="quantity-btn plus-btn"
+            onClick={() => setQuantity(quantity + 1)}
+          >
+            <img src={"icon-plus.svg"} alt="plus" />
+          </button>
+        </div>
+
+        {/* კალათაში დამატების ღილაკი */}
+        <button className="add-to-cart-btn" onClick={addCart}>
+          <img src={"icon-cart.svg"} alt="cart" className="btn-icon" /> Add To
+          Cart
+        </button>
+
+        {/* მთავარი სურათი, რომელზე დაჭერითაც იხსნება ლაითბოქსი */}
+        <div className="main-image-container">
+          <button
+            className="open-lightbox-btn"
+            onClick={() => setIsLightBoxOpen(true)}
+          >
+            <img
+              src={images[mainImageIndex]}
+              alt="Product"
+              className="main-product-img"
+            />
+          </button>
+        </div>
+
+        {/* მოდალური ფანჯარა */}
+        <div className="lightbox-wrapper">
+          {isLightBoxOpen && (
+            <div className="lightbox-overlay">
+              <div className="lightbox-content">
+                <button
+                  className="lightbox-close-btn"
+                  onClick={() => setIsLightBoxOpen(false)}
+                >
+                  X
+                </button>
+                <button
+                  className="lightbox-nav-btn prev-btn"
+                  onClick={prevImage}
+                >
+                  <img src={"/icon-previous.svg"} alt="prev" />
+                </button>
+                <img
+                  src={images[mainImageIndex]}
+                  alt="Product Large"
+                  className="lightbox-main-img"
+                />
+                <button
+                  className="lightbox-nav-btn next-btn"
+                  onClick={nextImage}
+                >
+                  <img src={"/icon-next.svg"} alt="next" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* მინიატურული სურათების გალერეა */}
+        <div className="thumbnails-container">
+          {thumbnails.map((thumb, index) => (
+            <button
+              key={index}
+              className={`thumbnail-btn ${mainImageIndex === index ? "active" : ""}`}
+              onClick={() => setMainImageIndex(index)}
+            >
+              <img
+                src={thumb}
+                alt={`Thumbnail ${index + 1}`}
+                className="thumbnail-img"
+              />
+            </button>
+          ))}
+        </div>
       </main>
-    </>
+    </div>
   );
 }
 
