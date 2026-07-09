@@ -173,46 +173,81 @@ function App() {
 
       {/* მთავარი კონტენტი */}
       <main className="app-main">
-        {/* რაოდენობის მართვის პანელი */}
-        <div className="quantity-controls">
-          <button
-            className="quantity-btn minus-btn"
-            onClick={() => {
-              if (quantity > 0) setQuantity(quantity - 1);
-            }}
-          >
-            <img src={"icon-minus.svg"} alt="minus" />
-          </button>
-          <span className="quantity-display">{quantity}</span>
-          <button
-            className="quantity-btn plus-btn"
-            onClick={() => setQuantity(quantity + 1)}
-          >
-            <img src={"icon-plus.svg"} alt="plus" />
-          </button>
+        {/* მარცხენა მხარე: სურათების გალერეა */}
+        <div className="product-gallery">
+          <div className="main-image-container">
+            <button
+              className="open-lightbox-btn"
+              onClick={() => setIsLightBoxOpen(true)}
+            >
+              <img
+                src={images[mainImageIndex] || "/thumb1.jpg"} // default fallback
+                alt="Product"
+                className="main-product-img"
+              />
+            </button>
+          </div>
+
+          <div className="thumbnails-container">
+            {thumbnails.map((thumb, index) => (
+              <button
+                key={index}
+                className={`thumbnail-btn ${mainImageIndex === index ? "active" : ""}`}
+                onClick={() => setMainImageIndex(index)}
+              >
+                <img
+                  src={thumb}
+                  alt={`Thumbnail ${index + 1}`}
+                  className="thumbnail-img"
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* კალათაში დამატების ღილაკი */}
-        <button className="add-to-cart-btn" onClick={addCart}>
-          <img src={"icon-cart.svg"} alt="cart" className="btn-icon" /> Add To
-          Cart
-        </button>
+        {/* მარჯვენა მხარე: პროდუქტის ინფორმაცია */}
+        <div className="product-info">
+          <h4 className="company-name">SNEAKER COMPANY</h4>
+          <h2 className="product-title">Fall Limited Edition Sneakers</h2>
+          <p className="product-description">
+            These low-profile sneakers are your perfect casual wear companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.
+          </p>
+          
+          <div className="price-container">
+            <div className="current-price-wrapper">
+              <span className="current-price">$125.00</span>
+              <span className="discount-badge">50%</span>
+            </div>
+            <span className="original-price">$250.00</span>
+          </div>
 
-        {/* მთავარი სურათი, რომელზე დაჭერითაც იხსნება ლაითბოქსი */}
-        <div className="main-image-container">
-          <button
-            className="open-lightbox-btn"
-            onClick={() => setIsLightBoxOpen(true)}
-          >
-            <img
-              src={images[mainImageIndex]}
-              alt="Product"
-              className="main-product-img"
-            />
-          </button>
+          <div className="actions-container">
+            <div className="quantity-controls">
+              <button
+                className="quantity-btn minus-btn"
+                onClick={() => {
+                  if (quantity > 0) setQuantity(quantity - 1);
+                }}
+              >
+                <img src={"/icon-minus.svg"} alt="minus" />
+              </button>
+              <span className="quantity-display">{quantity}</span>
+              <button
+                className="quantity-btn plus-btn"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                <img src={"/icon-plus.svg"} alt="plus" />
+              </button>
+            </div>
+
+            <button className="add-to-cart-btn" onClick={addCart}>
+              <img src={"/icon-cart.svg"} alt="cart" className="btn-icon" /> 
+              Add to cart
+            </button>
+          </div>
         </div>
 
-        {/* მოდალური ფანჯარა */}
+        {/* მოდალური ფანჯარა (Lightbox) */}
         <div className="lightbox-wrapper">
           {isLightBoxOpen && (
             <div className="lightbox-overlay">
@@ -221,7 +256,7 @@ function App() {
                   className="lightbox-close-btn"
                   onClick={() => setIsLightBoxOpen(false)}
                 >
-                  X
+                 <img src={"/icon-close.svg"} alt="close" />
                 </button>
                 <button
                   className="lightbox-nav-btn prev-btn"
@@ -230,7 +265,7 @@ function App() {
                   <img src={"/icon-previous.svg"} alt="prev" />
                 </button>
                 <img
-                  src={images[mainImageIndex]}
+                  src={images[mainImageIndex] || "/thumb1.jpg"}
                   alt="Product Large"
                   className="lightbox-main-img"
                 />
@@ -243,23 +278,6 @@ function App() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* მინიატურული სურათების გალერეა */}
-        <div className="thumbnails-container">
-          {thumbnails.map((thumb, index) => (
-            <button
-              key={index}
-              className={`thumbnail-btn ${mainImageIndex === index ? "active" : ""}`}
-              onClick={() => setMainImageIndex(index)}
-            >
-              <img
-                src={thumb}
-                alt={`Thumbnail ${index + 1}`}
-                className="thumbnail-img"
-              />
-            </button>
-          ))}
         </div>
       </main>
     </div>
