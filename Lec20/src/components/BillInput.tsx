@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface BillInputProps {
   bill: string;
@@ -6,16 +6,17 @@ interface BillInputProps {
 }
 
 const BillInput: React.FC<BillInputProps> = ({ bill, setBill }) => {
+  // შეყვანილი მნიშვნელობის წაკითხვა და მხოლოდ რიცხვითი მნიშვნელობის დაშვება
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow only numbers and decimals
-    if (/^\d*\.?\d*$/.test(value) || value === '') {
+    if (/^\d*\.?\d*$/.test(value) || value === "") {
       setBill(value);
     }
   };
 
   return (
     <div className="input-group">
+      {/* ბილის შეყვანის ველი */}
       <label htmlFor="bill">Bill</label>
       <div className="input-icon-wrapper">
         <span className="icon">$</span>

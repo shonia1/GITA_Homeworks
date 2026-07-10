@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PeopleInputProps {
   people: string;
@@ -6,17 +6,20 @@ interface PeopleInputProps {
 }
 
 const PeopleInput: React.FC<PeopleInputProps> = ({ people, setPeople }) => {
+  // ხალხის რაოდენობის შეყვანა მხოლოდ ციფრებით
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (/^\d*$/.test(value) || value === '') {
+    if (/^\d*$/.test(value) || value === "") {
       setPeople(value);
     }
   };
 
-  const hasError = people !== '' && parseInt(people, 10) === 0;
+  // ავტვირთვისას იწერება შეცდომა, თუ რაოდენობა ნულია
+  const hasError = people !== "" && parseInt(people, 10) === 0;
 
   return (
-    <div className={`input-group ${hasError ? 'error' : ''}`}>
+    <div className={`input-group ${hasError ? "error" : ""}`}>
+      {/* ხალხის რაოდენობის ველი */}
       <label htmlFor="people">
         Number of People
         {hasError && <span className="error-message">Can't be zero</span>}
@@ -30,7 +33,7 @@ const PeopleInput: React.FC<PeopleInputProps> = ({ people, setPeople }) => {
           placeholder="0"
           value={people}
           onChange={handleChange}
-          className={hasError ? 'error' : ''}
+          className={hasError ? "error" : ""}
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface TipSelectorProps {
   tip: number;
@@ -13,31 +13,35 @@ const TipSelector: React.FC<TipSelectorProps> = ({
   customTip,
   setCustomTip,
 }) => {
+  // წინასწარ შერჩეული ფულის წილის ვარიანტები
   const tipOptions = [5, 10, 15, 25, 50];
 
+  // პრეებსეტირებული პროცენტის არჩევა
   const handleTipClick = (value: number) => {
     setTip(value);
-    setCustomTip(''); // clear custom input when a preset is selected
+    setCustomTip("");
   };
 
+  // მომხმარებლის მიერ დაწერილი პროცენტის შეყვანა
   const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (/^\d*\.?\d*$/.test(value) || value === '') {
+    if (/^\d*\.?\d*$/.test(value) || value === "") {
       setCustomTip(value);
-      if (value !== '') {
-        setTip(0); // deselect preset buttons
+      if (value !== "") {
+        setTip(0);
       }
     }
   };
 
   return (
     <div className="input-group tip-selector">
+      {/* წილის არჩევის განყოფილება */}
       <label>Select Tip %</label>
       <div className="tip-grid">
         {tipOptions.map((value) => (
           <button
             key={value}
-            className={`tip-btn ${tip === value && customTip === '' ? 'active' : ''}`}
+            className={`tip-btn ${tip === value && customTip === "" ? "active" : ""}`}
             onClick={() => handleTipClick(value)}
           >
             {value}%
@@ -51,7 +55,7 @@ const TipSelector: React.FC<TipSelectorProps> = ({
             placeholder="Custom"
             value={customTip}
             onChange={handleCustomChange}
-            className={`custom-input ${customTip !== '' ? 'active' : ''}`}
+            className={`custom-input ${customTip !== "" ? "active" : ""}`}
           />
         </div>
       </div>

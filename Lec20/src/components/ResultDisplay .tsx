@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ResultDisplayProps {
   tipPerPerson: number;
@@ -9,12 +9,14 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({
   tipPerPerson,
   totalPerPerson,
 }) => {
+  // თანხის ფორმატირება ორი ათობითი ადგილით
   const formatCurrency = (value: number) => {
     return `$${value.toFixed(2)}`;
   };
 
   return (
     <div className="result-items">
+      {/* შედეგის განყოფილება თითო ადამიანზე */}
       <div className="result-item">
         <div>
           <div className="result-label">Tip Amount</div>
