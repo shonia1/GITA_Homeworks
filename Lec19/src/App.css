@@ -1,105 +1,82 @@
-/* Google Fonts - Kumbh Sans */
-@import url("https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap");
-
-/* CSS Variables */
+/* --- სტილგაიდის ცვლადები --- */
 :root {
-  /* Primary Colors */
   --color-orange: hsl(26, 100%, 55%);
   --color-pale-orange: hsl(25, 100%, 94%);
-
-  /* Neutral Colors */
   --color-very-dark-blue: hsl(220, 13%, 13%);
   --color-dark-grayish-blue: hsl(219, 9%, 45%);
   --color-grayish-blue: hsl(220, 14%, 75%);
   --color-light-grayish-blue: hsl(223, 64%, 98%);
   --color-white: hsl(0, 0%, 100%);
-  --color-lightbox-bg: rgba(0, 0, 0, 0.75);
-
-  /* Typography */
-  --font-family: "Kumbh Sans", sans-serif;
-  --font-size-base: 16px;
+  --color-black-lightbox: rgba(0, 0, 0, 0.75);
+  --font-main: 'Kumbh Sans', sans-serif;
 }
 
-/* Global Reset */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  color: var(--color-dark-grayish-blue);
+  font-family: var(--font-main);
   background-color: var(--color-white);
-  line-height: 1.5;
+  color: var(--color-very-dark-blue);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-ul {
-  list-style-type: none;
-}
-
-a {
-  text-decoration: none;
-}
-
-/* --- Container --- */
+/* მთავარი კონტეინერი */
 .app-container {
-  max-width: 1110px;
+  max-width: 1050px;
+  width: 100%;
   margin: 0 auto;
-  position: relative;
+  padding: 0 24px;
 }
 
-/* --- Header --- */
+/* --- ჰედერი --- */
 .app-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 112px;
+  height: 88px;
   border-bottom: 1px solid var(--color-light-grayish-blue);
-  padding: 0;
-  margin-bottom: 90px;
   position: relative;
 }
 
 .logo {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--color-very-dark-blue);
-  margin-right: 50px;
+  margin-right: 48px;
   cursor: pointer;
+  text-transform: lowercase;
 }
 
 .main-nav {
-  flex-grow: 1;
+  flex: 1;
 }
 
 .nav-list {
   display: flex;
-  gap: 32px;
+  list-style: none;
+  gap: 28px;
 }
 
 .nav-link {
+  text-decoration: none;
   color: var(--color-dark-grayish-blue);
-  height: 112px;
-  display: flex;
-  align-items: center;
+  font-size: 14px;
   position: relative;
-  transition: color 0.3s ease;
+  padding-bottom: 33px;
+  transition: color 0.2s ease;
 }
 
 .nav-link:hover {
   color: var(--color-very-dark-blue);
 }
 
-.nav-link::after {
+.nav-link:hover::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -107,51 +84,62 @@ a {
   width: 100%;
   height: 4px;
   background-color: var(--color-orange);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-  transform-origin: center;
 }
 
-.nav-link:hover::after {
-  transform: scaleX(1);
-}
-
-/* --- Cart & Profile Top Right --- */
-.cart-toggle-container {
+.header-right {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 32px;
 }
 
 .cart-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
   position: relative;
-  transition: opacity 0.2s ease;
 }
 
-.cart-toggle-btn:hover {
-  opacity: 0.7;
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: var(--color-orange);
+  color: var(--color-white);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
 }
 
-/* --- Cart Dropdown --- */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.user-avatar:hover {
+  border-color: var(--color-orange);
+}
+
+/* --- კალათის დროპდაუნი --- */
 .cart-dropdown {
   position: absolute;
-  top: 90px;
-  right: -20px;
+  top: 76px;
+  right: 0;
   width: 360px;
   background-color: var(--color-white);
   border-radius: 10px;
-  box-shadow: 0 20px 50px -20px rgba(29, 32, 38, 0.5);
-  z-index: 10;
-  min-height: 256px;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0px 20px 50px rgba(29, 32, 38, 0.15);
+  z-index: 100;
 }
 
 .cart-title {
+  padding: 20px;
   font-size: 16px;
   font-weight: 700;
-  color: var(--color-very-dark-blue);
-  padding: 24px;
 }
 
 .cart-divider {
@@ -159,187 +147,203 @@ a {
   border-top: 1px solid var(--color-light-grayish-blue);
 }
 
-.cart-empty-msg {
-  flex-grow: 1;
+.cart-empty-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
+
+.cart-empty-msg {
+  color: var(--color-dark-grayish-blue);
   font-weight: 700;
+  font-size: 15px;
 }
 
 .cart-items-list {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  padding: 20px;
 }
 
 .cart-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
+  margin-bottom: 20px;
 }
 
 .cart-item-img {
   width: 50px;
+  height: 50px;
   border-radius: 4px;
 }
 
 .cart-item-details {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-grow: 1;
-}
-
-.cart-item-name {
+  flex: 1;
   color: var(--color-dark-grayish-blue);
+  font-size: 15px;
+  line-height: 24px;
 }
 
-.cart-item-price {
-  color: var(--color-dark-grayish-blue);
-}
-
-.cart-item-price strong {
+.total-price-text {
   color: var(--color-very-dark-blue);
+  margin-left: 6px;
+}
+
+.cart-item-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.checkout-btn {
+  width: 100%;
+  height: 50px;
+  background-color: var(--color-orange);
+  color: var(--color-white);
+  border: none;
+  border-radius: 10px;
   font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
 }
 
-/* --- Main App Layout --- */
+/* --- მთავარი კონტენტი (Desktop) --- */
 .app-main {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  padding: 60px 24px;
   align-items: center;
-  justify-content: space-between;
-  gap: 125px;
-  padding: 0 48px;
 }
 
-/* --- Left Side: Product Gallery --- */
-.product-gallery {
-  width: 445px;
+.product-gallery-section {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-}
-
-.main-image-container {
-  width: 100%;
+  gap: 24px;
 }
 
 .open-lightbox-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
   width: 100%;
-  display: block;
 }
 
 .main-product-img {
   width: 100%;
+  max-height: 390px;
+  object-fit: cover;
   border-radius: 15px;
-  cursor: pointer;
 }
 
 .thumbnails-container {
   display: flex;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .thumbnail-btn {
-  width: 88px;
-  height: 88px;
+  flex: 1;
+  aspect-ratio: 1;
   border-radius: 10px;
   overflow: hidden;
-  position: relative;
-  background-color: var(--color-white);
   border: 2px solid transparent;
-  transition: all 0.2s ease;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
 }
 
 .thumbnail-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.2s ease;
-}
-
-.thumbnail-btn:hover .thumbnail-img {
-  opacity: 0.5;
 }
 
 .thumbnail-btn.active {
   border-color: var(--color-orange);
 }
 
-.thumbnail-btn.active .thumbnail-img {
-  opacity: 0.3;
+.thumbnail-btn.active::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
 }
 
-/* --- Right Side: Product Info --- */
-.product-info {
-  max-width: 445px;
+.thumbnail-btn:hover:not(.active)::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.product-info-section {
+  display: flex;
+  flex-direction: column;
 }
 
 .company-name {
   color: var(--color-orange);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .product-title {
-  color: var(--color-very-dark-blue);
-  font-size: 44px;
-  line-height: 48px;
+  font-size: 36px;
+  line-height: 42px;
   font-weight: 700;
-  margin-bottom: 32px;
+  color: var(--color-very-dark-blue);
+  margin-bottom: 24px;
 }
 
 .product-description {
   color: var(--color-dark-grayish-blue);
-  font-size: 16px;
-  line-height: 26px;
+  font-size: 15px;
+  line-height: 24px;
   margin-bottom: 24px;
 }
 
-.price-container {
+.price-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 32px;
+  gap: 6px;
+  margin-bottom: 28px;
 }
 
-.current-price-wrapper {
+.current-price-row {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
 .current-price {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  color: var(--color-very-dark-blue);
 }
 
 .discount-badge {
   background-color: var(--color-pale-orange);
   color: var(--color-orange);
   font-weight: 700;
-  padding: 4px 8px;
+  font-size: 14px;
+  padding: 3px 8px;
   border-radius: 6px;
 }
 
 .original-price {
   color: var(--color-grayish-blue);
   font-weight: 700;
+  font-size: 15px;
   text-decoration: line-through;
 }
 
-/* --- Actions Panel (Quantity + Add to Cart) --- */
-.actions-container {
+.purchase-actions-row {
   display: flex;
-  gap: 16px;
   align-items: center;
+  gap: 16px;
 }
 
 .quantity-controls {
@@ -347,18 +351,21 @@ a {
   align-items: center;
   justify-content: space-between;
   background-color: var(--color-light-grayish-blue);
-  width: 157px;
-  height: 56px;
+  height: 50px;
   border-radius: 10px;
   padding: 0 16px;
+  width: 130px;
 }
 
 .quantity-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 100%;
+  padding: 0 4px;
+  transition: opacity 0.2s ease;
 }
 
 .quantity-btn:hover {
@@ -367,89 +374,83 @@ a {
 
 .quantity-display {
   font-weight: 700;
-  color: var(--color-very-dark-blue);
+  font-size: 15px;
 }
 
 .add-to-cart-btn {
-  flex-grow: 1;
-  height: 56px;
+  flex: 1;
   background-color: var(--color-orange);
   color: var(--color-white);
-  font-weight: 700;
-  font-size: 16px;
+  border: none;
+  height: 50px;
   border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  box-shadow: 0 20px 50px -20px var(--color-orange);
-  transition: background-color 0.2s ease;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 0px 15px 40px rgba(255, 125, 26, 0.15);
+  transition: opacity 0.2s ease;
 }
 
 .add-to-cart-btn:hover {
-  background-color: hsl(26, 100%, 65%); /* Slightly lighter on hover */
+  opacity: 0.7;
 }
 
 .btn-icon {
+  width: 16px;
   filter: brightness(0) invert(1);
 }
 
-/* --- Lightbox Modal --- */
-.lightbox-wrapper {
-  position: relative;
-}
-
+/* --- ლაითბოქსის სტილები --- */
 .lightbox-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--color-lightbox-bg);
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: var(--color-black-lightbox);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 999;
 }
 
 .lightbox-content {
-  position: relative;
-  width: 550px;
-  max-width: 90vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 480px;
+  max-width: 90vw;
+  position: relative;
 }
 
 .lightbox-close-btn {
-  position: absolute;
-  top: -30px;
-  right: 81px;
+  align-self: flex-end;
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 101;
+  margin-bottom: 16px;
 }
 
-.lightbox-close-btn svg {
-  width: 14px;
-  height: 15px;
-  transition:
-    filter 0.3s ease,
-    transform 0.2s ease;
+.lightbox-close-btn img {
+  width: 16px;
   filter: brightness(0) invert(1);
+  transition: filter 0.2s ease;
 }
 
-.lightbox-close-btn:hover svg {
-  transform: scale(1.2);
-  filter: brightness(0) saturate(100%) invert(56%) sepia(94%) saturate(2250%)
-    hue-rotate(345deg) brightness(101%) contrast(105%);
+.lightbox-close-btn:hover img {
+  filter: brightness(0) saturate(100%) invert(56%) sepia(94%) saturate(2250%) hue-rotate(345deg) brightness(101%) contrast(105%);
+}
+
+.lightbox-image-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 32px;
 }
 
 .lightbox-main-img {
   width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
   border-radius: 15px;
 }
 
@@ -457,84 +458,149 @@ a {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
   background-color: var(--color-white);
-  width: 56px;
-  height: 56px;
+  border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.lightbox-nav-btn img {
+  width: 10px;
 }
 
 .lightbox-nav-btn:hover img {
-  filter: brightness(0) saturate(100%) invert(56%) sepia(94%) saturate(2250%)
-    hue-rotate(345deg) brightness(101%) contrast(105%);
+  filter: brightness(0) saturate(100%) invert(56%) sepia(94%) saturate(2250%) hue-rotate(345deg) brightness(101%) contrast(105%);
 }
 
-.prev-btn {
-  left: -28px;
+.prev-btn { left: -24px; }
+.next-btn { right: -24px; }
+
+.lightbox-thumbnails {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 16px;
+  padding: 0 24px;
 }
 
-.next-btn {
-  right: -28px;
+.lightbox-thumbnail-btn {
+  width: 76px;
+  height: 76px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
 }
 
-/* --- Mobile Responsive (375px) --- */
-@media screen and (max-width: 768px) {
+.lightbox-thumbnail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lightbox-thumbnail-btn.active {
+  border-color: var(--color-orange);
+  background-color: var(--color-white);
+}
+
+.lightbox-thumbnail-btn.active::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.lightbox-thumbnail-btn:hover:not(.active)::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* ==========================================================================
+   კრიტიკული განახლება: მობილურის ადაპტაცია (768px და ძირითადად 375px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* კონტეინერის პადინგის მოხსნა გვერდებზე, რომ სურათი კიდემდე გაიშალოს */
   .app-container {
     padding: 0;
   }
 
+  /* ჰედერის მობილური სტილი */
   .app-header {
     height: 68px;
-    padding: 0 24px;
-    margin-bottom: 0;
-    border-bottom: none;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-light-grayish-blue);
   }
 
   .logo {
-    margin-right: auto;
-    margin-left: 16px;
+    font-size: 24px;
+    margin-right: 0;
   }
 
-  /* Desktop Nav დამალვა */
+  /* Desktop-ის ლინკები მობილურზე სრულად ქრება (არღვევდა 375px სიგანეს) */
   .main-nav {
     display: none;
   }
 
+  .header-right {
+    gap: 16px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* კალათის დროპდაუნის პოზიციონირება მობილურზე */
   .cart-dropdown {
     top: 76px;
-    left: 8px;
     right: 8px;
+    left: 8px;
     width: auto;
-    min-height: 256px;
+    z-index: 1000;
   }
 
+  /* სრული გადაყვანა სვეტოვან (Column) განლაგებაზე */
   .app-main {
-    flex-direction: column;
-    padding: 0;
+    grid-template-columns: 1fr;
     gap: 24px;
+    padding: 0 0 40px 0;
   }
 
-  .product-gallery {
-    width: 100%;
+  .product-gallery-section {
     gap: 0;
   }
 
+  /* სურათი იშლება 100%-ზე მომრგვალების გარეშე ფიგმასავით */
   .main-product-img {
     border-radius: 0;
-    height: 300px;
-    object-fit: cover;
+    max-height: 350px;
+    width: 100%;
   }
 
-  /* მინიატურების დამალვა მობაილზე */
+  /* თამბნეილების დამალვა მობილურზე (Figma Mobile UI-ის მიხედვით) */
   .thumbnails-container {
     display: none;
   }
 
-  .product-info {
-    padding: 0 24px 88px 24px;
-    max-width: 100%;
+  /* ინფორმაციის ბლოკის შიდა დაშორებები */
+  .product-info-section {
+    padding: 0 24px;
+  }
+
+  .company-name {
+    font-size: 11px;
+    margin-bottom: 12px;
   }
 
   .product-title {
@@ -545,24 +611,45 @@ a {
 
   .product-description {
     font-size: 15px;
-    line-height: 25px;
+    line-height: 24px;
+    margin-bottom: 24px;
   }
 
-  .price-container {
+  /* ფასები ლაგდება ჰორიზონტალურად ერთ ხაზზე საპირისპირო მხარეებს (Figma Mobile) */
+  .price-block {
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
   }
 
-  .actions-container {
+  .current-price-row {
+    gap: 16px;
+  }
+
+  .original-price {
+    margin-top: 0;
+  }
+
+  /* ღილაკები ლაგდება ვერტიკალურად ერთმანეთის ქვეშ სრულ სიგანეზე */
+  .purchase-actions-row {
     flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
   }
 
   .quantity-controls {
     width: 100%;
+    height: 56px;
   }
 
   .add-to-cart-btn {
     width: 100%;
+    height: 56px;
+  }
+
+  /* ლაითბოქსი მობილურზე არ გვჭირდება */
+  .lightbox-overlay {
+    display: none;
   }
 }
