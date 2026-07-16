@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;700&family=Spartan:wght@400;700&display=swap');
+
+:root {
+  --color-white: #FFFFFF;
+  --color-dark: #070724;
+  --color-gray-dark: #38384F;
+  --color-gray: #838391;
+
+  --color-mercury: #419EBB;
+  --color-venus: #EDA249;
+  --color-earth: #6F2ED6;
+  --color-mars: #D14C32;
+  --color-jupiter: #D83A34;
+  --color-saturn: #CD5120;
+  --color-uranus: #1EC2A4;
+  --color-neptune: #2D68F0;
+
+  --font-antonio: 'Antonio', sans-serif;
+  --font-spartan: 'Spartan', sans-serif;
+
+  --h1-size: 80px;
+  --h1-line: 103px;
+  --h2-size: 40px;
+  --h2-line: 52px;
+  --h3-size: 12px;
+  --h3-line: 25px;
+  --h4-size: 11px;
+  --h4-line: 25px;
+  --body-size: 14px;
+  --body-line: 25px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  font-family: var(--font-spartan);
+  font-size: var(--body-size);
+  line-height: var(--body-line);
+}
+
+a {
+  color: var(--color-gray);
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
