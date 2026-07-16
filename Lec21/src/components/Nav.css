@@ -1,3 +1,4 @@
+/* ===== Base ===== */
 .nav {
   display: flex;
   justify-content: space-between;
@@ -39,69 +40,144 @@
 }
 
 .nav-dot {
-  display: none; /* მობილურზე გამოჩნდება */
+  display: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
 }
 
+/* ===== Hamburger (default hidden) ===== */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-white);
+  font-size: 32px;
+  cursor: pointer;
+  padding: 10px;
+  line-height: 1;
+  z-index: 1001;
+}
+
+/* ===== Mobile menu ===== */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: fixed;
+  top: 85px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 85px);
+  background: var(--color-dark);
+  padding: 24px 32px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.mobile-menu.open {
+  display: flex;
+}
+
+.mobile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--color-gray-dark);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1.36px;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.mobile-menu-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mobile-menu-name {
+  flex: 1;
+}
+
+.mobile-menu-arrow {
+  color: var(--color-gray);
+  font-size: 20px;
+}
+
+/* ===== Tablet (max-width: 768px) ===== */
 @media (max-width: 768px) {
   .nav {
-    flex-direction: column;
+    padding: 0 24px;
     height: auto;
-    padding: 16px 0;
+    min-height: 85px;
   }
+
   .nav-list {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
   }
+
   .nav-item {
     padding: 10px 0;
-    border-bottom: none;
     font-size: 9px;
     letter-spacing: 0.8px;
+    border-bottom: none;
   }
+
   .nav-item.active {
     border-bottom: 3px solid;
   }
-}
 
-@media (max-width: 375px) {
-  .nav {
-    flex-direction: row;
-    padding: 0 24px;
-    height: 68px;
-  }
-  .nav-logo {
-    font-size: 20px;
-  }
-  .nav-list {
-    display: none; /* მობილურზე ჰამბურგერი გვინდა, მაგრამ ახლა გამარტივებულად დავტოვოთ */
+  .hamburger {
+    display: none !important; /* იმალება ტაბლეტზე */
   }
 
   .mobile-menu {
-    display: none; /* default */
-    position: fixed;
+    display: none !important;
+  }
+}
+
+/* ===== Mobile (max-width: 375px) ===== */
+@media (max-width: 375px) {
+  .nav {
+    height: 68px;
+    padding: 0 16px;
+    min-height: unset;
+  }
+
+  .nav-logo {
+    font-size: 20px;
+  }
+
+  .nav-list {
+    display: none !important;
+  }
+
+  /* 🔥 აუცილებლად ჩანს ჰამბურგერი */
+  .hamburger {
+    display: block !important;
+    font-size: 32px !important;
+    padding: 8px !important;
+  }
+
+  .mobile-menu {
+    display: none;
     top: 68px;
-    left: 0;
-    width: 100%;
     height: calc(100vh - 68px);
-    background: var(--color-dark);
-    z-index: 100;
-    padding: 24px;
+    padding: 16px 24px;
   }
+
   .mobile-menu.open {
-    display: block;
+    display: flex !important;
   }
+
   .mobile-menu-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    font-size: 13px;
     padding: 16px 0;
-    border-bottom: 1px solid var(--color-gray-dark);
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 15px;
   }
 }

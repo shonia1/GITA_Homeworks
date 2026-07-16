@@ -1,5 +1,5 @@
 import React from "react";
-import { usePlanetContext } from "../context/PlanetContext";
+import { usePlanetContext } from "../context/usePlanetContext";
 import "./Tabs.css";
 
 const Tabs: React.FC = () => {

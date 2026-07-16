@@ -1,18 +1,22 @@
 import React, { useState } from "react";
-import { usePlanetContext } from "../context/PlanetContext";
+import { usePlanetContext } from "../context/usePlanetContext";
 import { useNavigate } from "react-router-dom";
 import "./Nav.css";
 
 const Nav: React.FC = () => {
   const { planets, currentPlanet } = usePlanetContext();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-
   const navigate = useNavigate();
+
   const handlePlanetClick = (planet: (typeof planets)[0]) => {
+    setMenuOpen(false);
     navigate(`/${planet.name.toLowerCase()}`);
   };
 
-  // ფერის მიღება პლანეტის სახელის მიხედვით
+  const handleToggle = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   const getColor = (name: string) => {
     const map: Record<string, string> = {
       Mercury: "var(--color-mercury)",
@@ -30,7 +34,10 @@ const Nav: React.FC = () => {
   return (
     <nav className="nav">
       <div className="nav-logo">THE PLANETS</div>
-      <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
+      <button className="hamburger" onClick={handleToggle}>
+        ☰
+      </button>
+
       <ul className="nav-list">
         {planets.map((planet) => (
           <li
@@ -52,6 +59,25 @@ const Nav: React.FC = () => {
           </li>
         ))}
       </ul>
+
+      {/* მობილური მენიუ */}
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        {planets.map((planet) => (
+          <div
+            key={planet.name}
+            className="mobile-menu-item"
+            onClick={() => handlePlanetClick(planet)}
+            onTouchStart={() => handlePlanetClick(planet)} // მობილურისთვის
+          >
+            <span
+              className="mobile-menu-dot"
+              style={{ backgroundColor: getColor(planet.name) }}
+            ></span>
+            <span className="mobile-menu-name">{planet.name}</span>
+            <span className="mobile-menu-arrow">›</span>
+          </div>
+        ))}
+      </div>
     </nav>
   );
 };

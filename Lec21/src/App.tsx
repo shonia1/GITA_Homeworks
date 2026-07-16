@@ -6,7 +6,8 @@ import {
   useParams,
   useNavigate,
 } from "react-router-dom";
-import { PlanetProvider, usePlanetContext } from "./context/PlanetContext";
+import { PlanetProvider } from "./context/PlanetContext";
+import { usePlanetContext } from "./context/usePlanetContext";
 import Nav from "./components/Nav";
 import PlanetDetail from "./components/PlanetDetail";
 import "./App.css";

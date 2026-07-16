@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, type ReactNode } from "react";
 import planetsData from "../data/data.json";
-import { Planet } from "../types/planet";
+import type { Planet } from "../types/planet";
 
 type TabType = "overview" | "structure" | "geology";
 
@@ -12,7 +12,9 @@ interface PlanetContextType {
   setActiveTab: (tab: TabType) => void;
 }
 
-const PlanetContext = createContext<PlanetContextType | undefined>(undefined);
+export const PlanetContext = createContext<PlanetContextType | undefined>(
+  undefined,
+);
 
 export const PlanetProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -34,11 +36,4 @@ export const PlanetProvider: React.FC<{ children: ReactNode }> = ({
       {children}
     </PlanetContext.Provider>
   );
-};
-
-export const usePlanetContext = () => {
-  const context = useContext(PlanetContext);
-  if (!context)
-    throw new Error("usePlanetContext must be used within a PlanetProvider");
-  return context;
 };
