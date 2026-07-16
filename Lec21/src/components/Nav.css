@@ -1,0 +1,83 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+  height: 85px;
+  border-bottom: 1px solid var(--color-gray-dark);
+}
+
+.nav-logo {
+  font-family: var(--font-antonio);
+  font-size: 28px;
+  letter-spacing: -1.05px;
+  color: var(--color-white);
+}
+
+.nav-list {
+  display: flex;
+  gap: 33px;
+}
+
+.nav-item {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-gray);
+  cursor: pointer;
+  padding: 33px 0;
+  border-bottom: 4px solid transparent;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-item.active {
+  color: var(--color-white);
+}
+
+.nav-dot {
+  display: none; /* მობილურზე გამოჩნდება */
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    flex-direction: column;
+    height: auto;
+    padding: 16px 0;
+  }
+  .nav-list {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .nav-item {
+    padding: 10px 0;
+    border-bottom: none;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+  }
+  .nav-item.active {
+    border-bottom: 3px solid;
+  }
+}
+
+@media (max-width: 375px) {
+  .nav {
+    flex-direction: row;
+    padding: 0 24px;
+    height: 68px;
+  }
+  .nav-logo {
+    font-size: 20px;
+  }
+  .nav-list {
+    display: none; /* მობილურზე ჰამბურგერი გვინდა, მაგრამ ახლა გამარტივებულად დავტოვოთ */
+  }
+  /* მოგვიანებით Mobile Menu-ს დავამატებთ */
+}

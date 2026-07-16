@@ -1,0 +1,88 @@
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.tab-btn {
+  background: none;
+  border: 1px solid var(--color-gray-dark);
+  color: var(--color-white);
+  font-family: var(--font-spartan);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 2.6px;
+  padding: 12px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-transform: uppercase;
+}
+
+.tab-btn:hover {
+  background: var(--color-gray-dark);
+}
+
+.tab-btn.active {
+  border-color: transparent;
+  color: var(--color-white);
+}
+
+.tab-number {
+  color: var(--color-gray);
+  font-weight: 400;
+}
+
+.tab-btn.active .tab-number {
+  color: var(--color-white);
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: row;
+    justify-content: space-around;
+    max-width: 100%;
+    gap: 0;
+  }
+  .tab-btn {
+    border: none;
+    border-bottom: 4px solid transparent;
+    padding: 20px 0;
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    background: transparent !important;
+    letter-spacing: 1px;
+    font-size: 10px;
+  }
+  .tab-btn.active {
+    border-bottom-color: var(
+      --color-mercury
+    ); /* იცვლება პლანეტის მიხედვით, მაგრამ css-ში არ შეიძლება, js-ით გავაკეთებთ */
+  }
+  .tab-number {
+    display: none;
+  }
+  .tab-btn:hover {
+    background: none;
+  }
+}
+
+@media (max-width: 375px) {
+  .tabs {
+    flex-direction: row;
+    border-bottom: 1px solid var(--color-gray-dark);
+  }
+  .tab-btn {
+    font-size: 9px;
+    padding: 16px 0;
+    letter-spacing: 0.8px;
+  }
+}
