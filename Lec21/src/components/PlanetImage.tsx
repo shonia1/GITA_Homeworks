@@ -14,7 +14,7 @@ const PlanetImage: React.FC = () => {
   };
 
   const getGeologySrc = () => {
-    return `/assets/geology-${currentPlanet.name.toLowerCase()}.png`;
+    return `/assets/planet-${currentPlanet.name.toLowerCase()}-geology.png`;
   };
 
   const showGeology = activeTab === "geology";
@@ -27,11 +27,7 @@ const PlanetImage: React.FC = () => {
         className="planet-image"
       />
       {showGeology && (
-        <img
-          src={getGeologySrc()}
-          alt="geology"
-          className="geology-overlay"
-        />
+        <img src={getGeologySrc()} alt="geology" className="geology-overlay" />
       )}
     </div>
   );
