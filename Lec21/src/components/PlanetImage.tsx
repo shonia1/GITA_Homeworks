@@ -6,8 +6,15 @@ const PlanetImage: React.FC = () => {
   const { currentPlanet, activeTab } = usePlanetContext();
 
   const getImageSrc = () => {
-    if (activeTab === "structure") return currentPlanet.images.internal;
-    return currentPlanet.images.planet;
+    const base = `/assets/planet-${currentPlanet.name.toLowerCase()}`;
+    if (activeTab === "structure") {
+      return `${base}-internal.svg`;
+    }
+    return `${base}.svg`;
+  };
+
+  const getGeologySrc = () => {
+    return `/assets/geology-${currentPlanet.name.toLowerCase()}.png`;
   };
 
   const showGeology = activeTab === "geology";
@@ -21,7 +28,7 @@ const PlanetImage: React.FC = () => {
       />
       {showGeology && (
         <img
-          src={currentPlanet.images.geology}
+          src={getGeologySrc()}
           alt="geology"
           className="geology-overlay"
         />

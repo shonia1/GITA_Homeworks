@@ -42,7 +42,9 @@ const Nav: React.FC = () => {
         {planets.map((planet) => (
           <li
             key={planet.name}
-            className={`nav-item ${currentPlanet.name === planet.name ? "active" : ""}`}
+            className={`nav-item ${
+              currentPlanet.name === planet.name ? "active" : ""
+            }`}
             onClick={() => handlePlanetClick(planet)}
             style={{
               borderBottomColor:
@@ -60,14 +62,12 @@ const Nav: React.FC = () => {
         ))}
       </ul>
 
-      {/* მობილური მენიუ */}
       <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         {planets.map((planet) => (
           <div
             key={planet.name}
             className="mobile-menu-item"
             onClick={() => handlePlanetClick(planet)}
-            onTouchStart={() => handlePlanetClick(planet)} // მობილურისთვის
           >
             <span
               className="mobile-menu-dot"

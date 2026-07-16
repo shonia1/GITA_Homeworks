@@ -2,7 +2,7 @@ import React, { createContext, useState, type ReactNode } from "react";
 import planetsData from "../data/data.json";
 import type { Planet } from "../types/planet";
 
-type TabType = "overview" | "structure" | "geology";
+export type TabType = "overview" | "structure" | "geology";
 
 interface PlanetContextType {
   planets: Planet[];
@@ -13,7 +13,7 @@ interface PlanetContextType {
 }
 
 export const PlanetContext = createContext<PlanetContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const PlanetProvider: React.FC<{ children: ReactNode }> = ({

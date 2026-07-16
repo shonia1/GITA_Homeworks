@@ -1,16 +1,11 @@
-/* src/index.css */
-
-/* ანტონიო და სპარტან ფონტები – ჩატვირთეთ Google Fonts-დან */
 @import url('https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;700&family=Spartan:wght@400;700&display=swap');
 
 :root {
-  /* ფერები */
   --color-white: #FFFFFF;
   --color-dark: #070724;
   --color-gray-dark: #38384F;
   --color-gray: #838391;
 
-  /* პლანეტების ფერები */
   --color-mercury: #419EBB;
   --color-venus: #EDA249;
   --color-earth: #6F2ED6;
@@ -20,11 +15,9 @@
   --color-uranus: #1EC2A4;
   --color-neptune: #2D68F0;
 
-  /* ტიპოგრაფია */
   --font-antonio: 'Antonio', sans-serif;
   --font-spartan: 'Spartan', sans-serif;
 
-  /* ზომები */
   --h1-size: 80px;
   --h1-line: 103px;
   --h2-size: 40px;

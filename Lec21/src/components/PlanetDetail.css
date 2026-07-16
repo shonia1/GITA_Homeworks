@@ -43,7 +43,6 @@
   font-weight: 700;
 }
 
-/* Tablet */
 @media (max-width: 768px) {
   .planet-detail {
     padding: 0 24px;
@@ -63,7 +62,6 @@
   }
 }
 
-/* Mobile */
 @media (max-width: 375px) {
   .planet-detail {
     padding: 0 16px;

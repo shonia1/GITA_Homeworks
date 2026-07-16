@@ -25,6 +25,8 @@ const Tabs: React.FC = () => {
     { key: "geology" as const, label: "SURFACE GEOLOGY" },
   ];
 
+  const isMobile = window.innerWidth <= 768;
+
   return (
     <div className="tabs">
       {tabs.map((tab) => (
@@ -34,13 +36,15 @@ const Tabs: React.FC = () => {
           onClick={() => setActiveTab(tab.key)}
           style={
             activeTab === tab.key
-              ? { backgroundColor: getColor(currentPlanet.name) }
+              ? {
+                  backgroundColor: isMobile ? undefined : getColor(currentPlanet.name),
+                  borderBottomColor: isMobile ? getColor(currentPlanet.name) : undefined,
+                }
               : {}
           }
         >
           <span className="tab-number">
-            0
-            {tab.key === "overview" ? "1" : tab.key === "structure" ? "2" : "3"}
+            0{tab.key === "overview" ? "1" : tab.key === "structure" ? "2" : "3"}
           </span>
           {tab.label}
         </button>

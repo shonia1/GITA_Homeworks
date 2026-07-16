@@ -12,7 +12,6 @@ import Nav from "./components/Nav";
 import PlanetDetail from "./components/PlanetDetail";
 import "./App.css";
 
-// კომპონენტი, რომელიც აკონტროლებს პარამეტრს
 const PlanetController: React.FC = () => {
   const { planetName } = useParams<{ planetName: string }>();
   const { planets, setCurrentPlanet, setActiveTab } = usePlanetContext();
@@ -21,7 +20,7 @@ const PlanetController: React.FC = () => {
   useEffect(() => {
     if (planetName) {
       const found = planets.find(
-        (p) => p.name.toLowerCase() === planetName.toLowerCase(),
+        (p) => p.name.toLowerCase() === planetName.toLowerCase()
       );
       if (found) {
         setCurrentPlanet(found);
