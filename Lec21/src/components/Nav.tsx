@@ -1,16 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { usePlanetContext } from "../context/PlanetContext";
 import { useNavigate } from "react-router-dom";
 import "./Nav.css";
 
 const Nav: React.FC = () => {
-  const { planets, currentPlanet, setCurrentPlanet, setActiveTab } =
-    usePlanetContext();
+  const { planets, currentPlanet } = usePlanetContext();
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const handlePlanetClick = (planet: (typeof planets)[0]) => {
-    setCurrentPlanet(planet);
-    setActiveTab("overview");
     navigate(`/${planet.name.toLowerCase()}`);
   };
 
@@ -32,6 +30,7 @@ const Nav: React.FC = () => {
   return (
     <nav className="nav">
       <div className="nav-logo">THE PLANETS</div>
+      <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       <ul className="nav-list">
         {planets.map((planet) => (
           <li
