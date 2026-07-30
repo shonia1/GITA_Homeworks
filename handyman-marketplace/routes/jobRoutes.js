@@ -1,15 +1,34 @@
 // routes/jobRoutes.js
-// Defines routes for job-related endpoints.
+// Defines all routes for job-related endpoints.
 
-const express = require("express");
-const { createJob, getJobs, getJob } = require("../controllers/jobController");
+const express = require('express');
+const {
+  createJob,
+  getJobs,
+  getJob,
+  updateJobStatus,
+  deleteAllJobs, // optional: development only
+} = require('../controllers/jobController');
 
 const router = express.Router();
 
-// GET all jobs & POST a new job
-router.route("/").get(getJobs).post(createJob);
+// ──────────────────────────────────────────────
+// GET  /api/jobs  → all jobs (with filtering, sorting)
+// POST /api/jobs  → create a new job
+// ──────────────────────────────────────────────
+router.route('/')
+  .get(getJobs)
+  .post(createJob);
 
-// GET a single job by ID
-router.route("/:id").get(getJob);
+// ──────────────────────────────────────────────
+// GET    /api/jobs/:id  → single job by ID
+// PATCH  /api/jobs/:id  → update job status (open/closed etc.)
+// ──────────────────────────────────────────────
+router.route('/:id')
+  .get(getJob)
+  .patch(updateJobStatus);
+
+// (Optional) DELETE all jobs – dev use only
+// router.route('/delete-all').delete(deleteAllJobs);
 
 module.exports = router;

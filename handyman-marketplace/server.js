@@ -1,33 +1,40 @@
 // server.js
-const dns = require("dns");
-dns.setDefaultResultOrder("ipv4first");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+// Entry point – Express server with MongoDB, routes, and Telegram bot.
 
-require("dotenv").config();
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/db");
+require('dotenv').config();
+
+const express = require('express');
+const cors = require('cors');
+const connectDB = require('./config/db');
+
+// Import route modules (ALL before using them)
+const jobRoutes = require('./routes/jobRoutes');
+const bidRoutes = require('./routes/bidRoutes');
+const authRoutes = require('./routes/authRoutes');   // <-- ეს არის მნიშვნელოვანი
 
 const app = express();
 
+// Connect to MongoDB
 connectDB();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Import routes
-const jobRoutes = require("./routes/jobRoutes");
-const bidRoutes = require("./routes/bidRoutes");
+// Register routes
+app.use('/api/jobs', jobRoutes);
+app.use('/api/bids', bidRoutes);
+app.use('/api/auth', authRoutes);   // <-- ახლა authRoutes უკვე ცნობილია
 
-// Use routes
-app.use("/api/jobs", jobRoutes);
-app.use("/api/bids", bidRoutes);
-
-app.get("/api/health", (req, res) => {
+// Health check endpoint
+app.get('/api/health', (req, res) => {
   res.status(200).json({
-    status: "OK",
-    message: "Server is running and MongoDB is connected",
+    status: 'OK',
+    message: 'Server is running and MongoDB is connected',
   });
 });
 
