@@ -16,6 +16,9 @@ const authRoutes = require("./routes/authRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 
+const sitemapRoutes = require("./routes/sitemapRoutes");
+app.use("/", sitemapRoutes);
+
 const app = express();
 
 // Connect to MongoDB
@@ -23,7 +26,8 @@ connectDB();
 
 // ─── Telegram bot launch ───
 if (process.env.TELEGRAM_BOT_TOKEN) {
-  bot.launch()
+  bot
+    .launch()
     .then(() => {
       console.log("✅ Telegram bot is running (polling mode)");
     })

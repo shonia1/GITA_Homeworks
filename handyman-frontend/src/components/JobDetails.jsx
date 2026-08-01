@@ -4,6 +4,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import BidForm from "./BidForm";
 import { useAuth } from "../hooks/useAuth";
+import SEO from "./SEO";
+import JobSchema from "./JobSchema";
+import Breadcrumbs from "./Breadcrumbs";
 
 function JobDetails() {
   const { id } = useParams();
@@ -373,6 +376,15 @@ function JobDetails() {
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-4xl">
+      <JobSchema job={job} />
+      <SEO
+        title={`${job.title} – Handyman`}
+        description={`${job.category} – ${job.district}. ბიუჯეტი: ${job.budget} GEL. ${job.description.substring(0, 150)}`}
+        image={job.photos?.[0] || "/logo512.png"}
+        url={`/jobs/${job._id}`}
+        type="article"
+      />
+      <Breadcrumbs />
       <Link
         to="/"
         className="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-3 sm:mb-4 text-sm sm:text-base"
