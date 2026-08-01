@@ -17,16 +17,12 @@ exports.createJob = async (req, res) => {
     const job = await Job.create(jobData);
     console.log("✅ Job created with ID:", job._id);
 
-    // ─── Send Telegram notifications (non‑blocking) ───
+    // Non‑blocking Telegram notifications
     setImmediate(async () => {
       try {
         const token = process.env.TELEGRAM_BOT_TOKEN;
-        if (!token) {
-          console.warn("⚠️ TELEGRAM_BOT_TOKEN not set. Skipping notifications.");
-          return;
-        }
+        if (!token) return;
 
-        // Find craftsmen who match the category AND the city
         const craftsmen = await User.find({
           role: "craftsman",
           profession: { $in: [job.category] },
@@ -35,7 +31,7 @@ exports.createJob = async (req, res) => {
         });
 
         if (craftsmen.length === 0) {
-          console.log(`ℹ️ No craftsmen found for ${job.category} in ${job.district}`);
+          console.log(`ℹ️ No craftsmen for ${job.category} in ${job.district}`);
           return;
         }
 
@@ -51,34 +47,28 @@ exports.createJob = async (req, res) => {
 📅 *Posted:* ${new Date(job.createdAt).toLocaleString()}
         `;
 
-        // Send to each craftsman (non‑blocking)
-        const sendPromises = craftsmen.map((c) =>
-          bot.telegram
-            .sendMessage(c.telegramChatId, message, { parse_mode: "Markdown" })
-            .then(() => console.log(`✅ Telegram sent to ${c.name} (${c.telegramChatId})`))
-            .catch((err) =>
-              console.error(`❌ Failed to send to ${c.name}:`, err.message)
-            )
+        await Promise.allSettled(
+          craftsmen.map((c) =>
+            bot.telegram
+              .sendMessage(c.telegramChatId, message, {
+                parse_mode: "Markdown",
+              })
+              .then(() => console.log(`✅ Telegram sent to ${c.name}`))
+              .catch((err) =>
+                console.error(`❌ Failed to send to ${c.name}:`, err.message),
+              ),
+          ),
         );
-
-        await Promise.allSettled(sendPromises);
-        console.log(`✅ Telegram notifications processed for job ${job._id}`);
-      } catch (telegramError) {
-        console.error("❌ Telegram notification error:", telegramError.message);
+        console.log(`✅ Telegram done for job ${job._id}`);
+      } catch (err) {
+        console.error("❌ Telegram error:", err.message);
       }
     });
 
-    // ─── Respond immediately ──────────────────────────
-    res.status(201).json({
-      success: true,
-      data: job,
-    });
+    res.status(201).json({ success: true, data: job });
   } catch (error) {
     console.error("❌ Error creating job:", error.message);
-    res.status(400).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(400).json({ success: false, error: error.message });
   }
 };
 
@@ -102,7 +92,12 @@ exports.getJobs = async (req, res) => {
     if (search) filter.title = { $regex: search, $options: "i" };
     if (cityFilter) filter.district = cityFilter;
 
-    if (!showArchived) {
+    // 🔥 არქივის ფილტრი – სწორი ლოგიკა
+    if (showArchived) {
+      // თუ არქივი ჩართულია – ვაჩვენოთ მხოლოდ დასრულებული/გაუქმებული
+      filter.status = { $in: ["completed", "cancelled"] };
+    } else {
+      // თუ არქივი გამორთულია – არ ვაჩვენოთ დასრულებული/გაუქმებული
       filter.status = { $nin: ["completed", "cancelled"] };
     }
 
@@ -207,7 +202,9 @@ exports.getJob = async (req, res) => {
     res.status(200).json({ success: true, data: jobData });
   } catch (error) {
     if (error.kind === "ObjectId") {
-      return res.status(404).json({ success: false, error: "Invalid job ID format" });
+      return res
+        .status(404)
+        .json({ success: false, error: "Invalid job ID format" });
     }
     res.status(400).json({ success: false, error: error.message });
   }
@@ -221,7 +218,10 @@ exports.getJob = async (req, res) => {
 exports.updateJobStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    if (!status || !["open", "assigned", "completed", "cancelled"].includes(status)) {
+    if (
+      !status ||
+      !["open", "assigned", "completed", "cancelled"].includes(status)
+    ) {
       return res.status(400).json({
         success: false,
         error: "Invalid status. Allowed: open, assigned, completed, cancelled",
@@ -246,7 +246,9 @@ exports.updateJobStatus = async (req, res) => {
     res.status(200).json({ success: true, data: job });
   } catch (error) {
     if (error.kind === "ObjectId") {
-      return res.status(404).json({ success: false, error: "Invalid job ID format" });
+      return res
+        .status(404)
+        .json({ success: false, error: "Invalid job ID format" });
     }
     res.status(400).json({ success: false, error: error.message });
   }
@@ -277,7 +279,9 @@ exports.deleteJob = async (req, res) => {
     res.status(200).json({ success: true, data: {} });
   } catch (error) {
     if (error.kind === "ObjectId") {
-      return res.status(404).json({ success: false, error: "Invalid job ID format" });
+      return res
+        .status(404)
+        .json({ success: false, error: "Invalid job ID format" });
     }
     res.status(400).json({ success: false, error: error.message });
   }
@@ -300,16 +304,28 @@ exports.acceptJob = async (req, res) => {
     }
 
     if (req.user.role !== "craftsman") {
-      return res.status(403).json({ success: false, error: "Only craftsmen can accept jobs" });
+      return res
+        .status(403)
+        .json({ success: false, error: "Only craftsmen can accept jobs" });
     }
 
     if (!req.user.profession || !req.user.profession.includes(job.category)) {
-      return res.status(400).json({ success: false, error: "Your profession does not match this job category" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: "Your profession does not match this job category",
+        });
     }
 
-    const existingAccepted = await Bid.findOne({ job: job._id, status: { $in: ["accepted", "accepted_pending"] } });
+    const existingAccepted = await Bid.findOne({
+      job: job._id,
+      status: { $in: ["accepted", "accepted_pending"] },
+    });
     if (existingAccepted) {
-      return res.status(400).json({ success: false, error: "This job is already assigned" });
+      return res
+        .status(400)
+        .json({ success: false, error: "This job is already assigned" });
     }
 
     const bid = await Bid.create({
