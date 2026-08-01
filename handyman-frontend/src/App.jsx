@@ -7,14 +7,27 @@ import JobForm from "./components/JobForm";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import GoogleAnalytics from "./components/GoogleAnalytics";
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense } from "react";
+import { Helmet } from "react-helmet-async";
 
 function App() {
   return (
     <BrowserRouter>
+      <Helmet>
+        <meta
+          name="google-site-verification"
+          content="QZgWMpIfPXPpro4nNNTre801TG-bX2hmgcWYpdulleA"
+        />
+      </Helmet>
       <GoogleAnalytics />
       <Navbar />
-      <Suspense fallback={<div className="flex justify-center items-center h-64">იტვირთება...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center h-64">
+            იტვირთება...
+          </div>
+        }
+      >
         <Routes>
           <Route path="/" element={<JobList />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
