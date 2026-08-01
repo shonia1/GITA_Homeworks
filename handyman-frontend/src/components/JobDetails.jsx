@@ -39,13 +39,15 @@ function JobDetails() {
     try {
       const [jobRes, bidsRes] = await Promise.all([
         api.get(`/jobs/${id}`),
-        user ? api.get(`/bids/job/${id}`).catch(err => {
-          if (err.response?.status === 404) {
-            setBidsError("ჯერ არ არის შეთავაზებები");
-            return { data: { data: [] } };
-          }
-          throw err;
-        }) : Promise.resolve({ data: { data: [] } })
+        user
+          ? api.get(`/bids/job/${id}`).catch((err) => {
+              if (err.response?.status === 404) {
+                setBidsError("ჯერ არ არის შეთავაზებები");
+                return { data: { data: [] } };
+              }
+              throw err;
+            })
+          : Promise.resolve({ data: { data: [] } }),
       ]);
       setJob(jobRes.data.data);
       if (bidsRes && bidsRes.data) {
@@ -80,7 +82,7 @@ function JobDetails() {
   useEffect(() => {
     if (!user || user.role !== "craftsman") return;
     const acceptedBid = bids.find(
-      (b) => b.craftsman === user.id && b.status === "accepted_pending"
+      (b) => b.craftsman === user.id && b.status === "accepted_pending",
     );
     if (acceptedBid) {
       setAcceptedBidId(acceptedBid._id);
@@ -119,7 +121,11 @@ function JobDetails() {
       return;
     }
     const actionMap = { completed: "დასრულება", cancelled: "გაუქმება" };
-    if (!window.confirm(`დარწმუნებული ხართ, რომ გსურთ დავალების "${actionMap[newStatus]}"?`)) {
+    if (
+      !window.confirm(
+        `დარწმუნებული ხართ, რომ გსურთ დავალების "${actionMap[newStatus]}"?`,
+      )
+    ) {
       return;
     }
     setUpdating(true);
@@ -142,7 +148,7 @@ function JobDetails() {
     try {
       const response = await api.patch(`/bids/${bidId}/status`, { status });
       setBids((prev) =>
-        prev.map((b) => (b._id === bidId ? response.data.data : b))
+        prev.map((b) => (b._id === bidId ? response.data.data : b)),
       );
       if (status === "accepted") {
         const jobRes = await api.get(`/jobs/${id}`);
@@ -192,7 +198,8 @@ function JobDetails() {
 
   const handleCancelBid = async () => {
     if (!acceptedBidId) return;
-    if (!window.confirm("დარწმუნებული ხართ, რომ გსურთ შეთავაზების გაუქმება?")) return;
+    if (!window.confirm("დარწმუნებული ხართ, რომ გსურთ შეთავაზების გაუქმება?"))
+      return;
     setIsCancelling(true);
     try {
       await api.post(`/bids/${acceptedBidId}/cancel`);
@@ -206,7 +213,8 @@ function JobDetails() {
 
   const handleConfirmBid = async () => {
     if (!acceptedBidId) return;
-    if (!window.confirm("დარწმუნებული ხართ, რომ გსურთ დავალების დადასტურება?")) return;
+    if (!window.confirm("დარწმუნებული ხართ, რომ გსურთ დავალების დადასტურება?"))
+      return;
     setIsConfirming(true);
     try {
       await api.post(`/bids/${acceptedBidId}/confirm`);
@@ -229,7 +237,7 @@ function JobDetails() {
 
     if (user.role === "craftsman") {
       const pendingCount = questions.filter(
-        (q) => q.status === "pending" && q.author === user.id
+        (q) => q.status === "pending" && q.author === user.id,
       ).length;
       if (pendingCount >= 3) {
         alert("თქვენ გაქვთ 3 დაუსრულებელი კითხვა.");
@@ -279,7 +287,11 @@ function JobDetails() {
               const replies = item.replies || [];
               const newReply = res.data.data;
               if (newReply.status === "answered") {
-                return { ...item, status: "answered", replies: [...replies, newReply] };
+                return {
+                  ...item,
+                  status: "answered",
+                  replies: [...replies, newReply],
+                };
               }
               return { ...item, replies: [...replies, newReply] };
             }
@@ -310,47 +322,74 @@ function JobDetails() {
 
   // ── Loading / Error ──────────────────────────────
   if (loading && !job) {
-    return <div className="flex justify-center items-center h-64 text-gray-500">იტვირთება...</div>;
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        იტვირთება...
+      </div>
+    );
   }
   if (error) {
-    return <div className="text-red-500 text-center py-10">შეცდომა: {error}</div>;
+    return (
+      <div className="text-red-500 text-center py-10">შეცდომა: {error}</div>
+    );
   }
   if (!job) {
-    return <div className="text-center py-10 text-gray-500">დავალება არ მოიძებნა</div>;
+    return (
+      <div className="text-center py-10 text-gray-500">
+        დავალება არ მოიძებნა
+      </div>
+    );
   }
 
   const isOwner = user && job.client === user.id;
   const isCraftsman = user && user.role === "craftsman";
-  const acceptedBid = bids.find(b => b.status === "accepted" || b.status === "accepted_pending");
+  const acceptedBid = bids.find(
+    (b) => b.status === "accepted" || b.status === "accepted_pending",
+  );
   const isCraftsmanAccepted = acceptedBid && acceptedBid.craftsman === user?.id;
-  const isPendingConfirmation = acceptedBid && acceptedBid.status === "accepted_pending";
+  const isPendingConfirmation =
+    acceptedBid && acceptedBid.status === "accepted_pending";
   const canCancel = isPendingConfirmation && timer > 0;
   const canConfirm = isPendingConfirmation;
-  const isJobClosedForQuestions = (job.status === "assigned" || job.status === "completed") && acceptedBid?.status === "accepted";
+  const isJobClosedForQuestions =
+    (job.status === "assigned" || job.status === "completed") &&
+    acceptedBid?.status === "accepted";
 
   const getStatusBadge = () => {
     switch (job.status) {
-      case "open": return { label: "🟢 ღია", color: "bg-green-100 text-green-700" };
-      case "assigned": return { label: "🔄 მიმდინარე", color: "bg-blue-100 text-blue-700" };
-      case "completed": return { label: "🔒 დასრულებული", color: "bg-gray-100 text-gray-700" };
-      case "cancelled": return { label: "❌ გაუქმებული", color: "bg-red-100 text-red-700" };
-      default: return { label: job.status, color: "bg-gray-100 text-gray-700" };
+      case "open":
+        return { label: "🟢 ღია", color: "bg-green-100 text-green-700" };
+      case "assigned":
+        return { label: "🔄 მიმდინარე", color: "bg-blue-100 text-blue-700" };
+      case "completed":
+        return { label: "🔒 დასრულებული", color: "bg-gray-100 text-gray-700" };
+      case "cancelled":
+        return { label: "❌ გაუქმებული", color: "bg-red-100 text-red-700" };
+      default:
+        return { label: job.status, color: "bg-gray-100 text-gray-700" };
     }
   };
   const statusBadge = getStatusBadge();
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-4xl">
-      <Link to="/" className="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-3 sm:mb-4 text-sm sm:text-base">
+      <Link
+        to="/"
+        className="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-3 sm:mb-4 text-sm sm:text-base"
+      >
         ← უკან დაბრუნება
       </Link>
 
       {/* JOB CARD */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-3">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">{job.title}</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
+            {job.title}
+          </h1>
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <span className={`text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full ${statusBadge.color}`}>
+            <span
+              className={`text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full ${statusBadge.color}`}
+            >
               {statusBadge.label}
             </span>
 
@@ -424,17 +463,25 @@ function JobDetails() {
         </div>
 
         <div className="flex flex-wrap gap-2 sm:gap-3 mt-3">
-          <span className="bg-indigo-50 text-indigo-700 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">{job.category}</span>
-          <span className="bg-gray-50 text-gray-600 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">📍 {job.district}</span>
+          <span className="bg-indigo-50 text-indigo-700 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+            {job.category}
+          </span>
+          <span className="bg-gray-50 text-gray-600 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+            📍 {job.district}
+          </span>
         </div>
 
         <div className="mt-4 sm:mt-6">
-          <p className="text-gray-700 text-sm sm:text-base whitespace-pre-wrap leading-relaxed">{job.description}</p>
+          <p className="text-gray-700 text-sm sm:text-base whitespace-pre-wrap leading-relaxed">
+            {job.description}
+          </p>
         </div>
 
         <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg flex justify-between items-center">
           <span className="text-gray-600 text-sm sm:text-base">💰 ბიუჯეტი</span>
-          <span className="text-xl sm:text-2xl md:text-3xl font-bold text-green-700">{job.budget} GEL</span>
+          <span className="text-xl sm:text-2xl md:text-3xl font-bold text-green-700">
+            {job.budget} GEL
+          </span>
         </div>
 
         {/* Client info */}
@@ -442,75 +489,79 @@ function JobDetails() {
           <div>
             <span className="text-gray-500">კლიენტი</span>
             <p className="font-semibold">
-              {!user ? (
-                "🔒 სავალდებულოა ავტორიზაცია"
-              ) : isOwner || acceptedBid?.status === "accepted" ? (
-                job.clientName
-              ) : isCraftsman && acceptedBid?.status === "accepted_pending" ? (
-                `⏳ ${formatTimer(timer)}`
-              ) : (
-                "🔒 სავალდებულოა ავტორიზაცია"
-              )}
+              {!user
+                ? "🔒 სავალდებულოა ავტორიზაცია"
+                : isOwner || acceptedBid?.status === "accepted"
+                  ? job.clientName
+                  : isCraftsman && acceptedBid?.status === "accepted_pending"
+                    ? `⏳ ${formatTimer(timer)}`
+                    : "🔒 სავალდებულოა ავტორიზაცია"}
             </p>
           </div>
           <div>
             <span className="text-gray-500">ტელეფონი</span>
             <p className="font-semibold">
-              {!user ? (
-                "🔒 სავალდებულოა ავტორიზაცია"
-              ) : isOwner || acceptedBid?.status === "accepted" ? (
-                job.clientPhone
-              ) : isCraftsman && acceptedBid?.status === "accepted_pending" ? (
-                `⏳ ${formatTimer(timer)}`
-              ) : (
-                "🔒 სავალდებულოა ავტორიზაცია"
-              )}
+              {!user
+                ? "🔒 სავალდებულოა ავტორიზაცია"
+                : isOwner || acceptedBid?.status === "accepted"
+                  ? job.clientPhone
+                  : isCraftsman && acceptedBid?.status === "accepted_pending"
+                    ? `⏳ ${formatTimer(timer)}`
+                    : "🔒 სავალდებულოა ავტორიზაცია"}
             </p>
           </div>
           <div>
             <span className="text-gray-500">გამოქვეყნდა</span>
-            <p className="font-semibold">{new Date(job.createdAt).toLocaleDateString()}</p>
+            <p className="font-semibold">
+              {new Date(job.createdAt).toLocaleDateString()}
+            </p>
           </div>
           {job.address && (
             <div>
               <span className="text-gray-500">მისამართი</span>
               <p className="font-semibold">
-                {!user ? (
-                  "🔒 სავალდებულოა ავტორიზაცია"
-                ) : isOwner || acceptedBid?.status === "accepted" ? (
-                  job.address
-                ) : isCraftsman && acceptedBid?.status === "accepted_pending" ? (
-                  `⏳ ${formatTimer(timer)}`
-                ) : (
-                  "🔒 სავალდებულოა ავტორიზაცია"
-                )}
+                {!user
+                  ? "🔒 სავალდებულოა ავტორიზაცია"
+                  : isOwner || acceptedBid?.status === "accepted"
+                    ? job.address
+                    : isCraftsman && acceptedBid?.status === "accepted_pending"
+                      ? `⏳ ${formatTimer(timer)}`
+                      : "🔒 სავალდებულოა ავტორიზაცია"}
               </p>
             </div>
           )}
         </div>
 
         {/* Craftsman info for client */}
-        {isOwner && acceptedBid && acceptedBid.status === "accepted" && (job.status === "assigned" || job.status === "completed") && (
-          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="text-xs sm:text-sm font-semibold text-blue-700 mb-2">👷 ხელოსნის ინფორმაცია</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
-              <div>
-                <span className="text-gray-500">სახელი</span>
-                <p className="font-semibold">{acceptedBid.craftsmanName}</p>
-              </div>
-              <div>
-                <span className="text-gray-500">ტელეფონი</span>
-                <p className="font-semibold">{acceptedBid.craftsmanPhone}</p>
+        {isOwner &&
+          acceptedBid &&
+          acceptedBid.status === "accepted" &&
+          (job.status === "assigned" || job.status === "completed") && (
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h3 className="text-xs sm:text-sm font-semibold text-blue-700 mb-2">
+                👷 ხელოსნის ინფორმაცია
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+                <div>
+                  <span className="text-gray-500">სახელი</span>
+                  <p className="font-semibold">{acceptedBid.craftsmanName}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">ტელეფონი</span>
+                  <p className="font-semibold">{acceptedBid.craftsmanPhone}</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* BIDS */}
       <div className="mt-6 sm:mt-10">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
-          📩 შეთავაზებები <span className="text-sm font-normal text-gray-500">({bids.length})</span>
+          📩 შეთავაზებები{" "}
+          <span className="text-sm font-normal text-gray-500">
+            ({bids.length})
+          </span>
         </h2>
 
         {bidsError ? (
@@ -518,7 +569,9 @@ function JobDetails() {
             {bidsError}
           </div>
         ) : bidsLoading ? (
-          <div className="text-center text-gray-400 mt-3 sm:mt-4">იტვირთება...</div>
+          <div className="text-center text-gray-400 mt-3 sm:mt-4">
+            იტვირთება...
+          </div>
         ) : bids.length === 0 ? (
           <div className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-6 sm:p-8 text-center text-gray-400 mt-3 sm:mt-4 text-sm sm:text-base">
             ჯერ არ არის შეთავაზებები
@@ -526,15 +579,26 @@ function JobDetails() {
         ) : (
           <div className="space-y-3 sm:space-y-4 mt-3 sm:mt-4">
             {bids.map((bid) => (
-              <div key={bid._id} className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+              <div
+                key={bid._id}
+                className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition"
+              >
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0">
                   <div>
-                    <p className="font-bold text-gray-800 text-sm sm:text-base">{bid.craftsmanName}</p>
-                    <p className="text-xs sm:text-sm text-gray-500">{bid.craftsmanPhone}</p>
-                    <p className="text-gray-600 text-sm sm:text-base mt-1 sm:mt-2">{bid.message}</p>
+                    <p className="font-bold text-gray-800 text-sm sm:text-base">
+                      {bid.craftsmanName}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500">
+                      {bid.craftsmanPhone}
+                    </p>
+                    <p className="text-gray-600 text-sm sm:text-base mt-1 sm:mt-2">
+                      {bid.message}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg sm:text-xl font-bold text-green-600">{bid.offeredPrice} GEL</p>
+                    <p className="text-lg sm:text-xl font-bold text-green-600">
+                      {bid.offeredPrice} GEL
+                    </p>
                     <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full mt-1">
                       {bid.status}
                     </span>
@@ -566,7 +630,10 @@ function JobDetails() {
 
         {isCraftsman && job.status === "open" && !acceptedBid && (
           <div className="mt-4 sm:mt-6 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-            <BidForm jobId={id} onBidAdded={(newBid) => setBids([...bids, newBid])} />
+            <BidForm
+              jobId={id}
+              onBidAdded={(newBid) => setBids([...bids, newBid])}
+            />
           </div>
         )}
       </div>
@@ -577,19 +644,30 @@ function JobDetails() {
           💬 კითხვები
           {user && user.role === "craftsman" && !isJobClosedForQuestions && (
             <span className="text-xs sm:text-sm font-normal text-gray-500 ml-2">
-              (დარჩენილი: {Math.max(0, 3 - (questions.filter(q => q.status === "pending" && q.author === user.id).length))})
+              (დარჩენილი:{" "}
+              {Math.max(
+                0,
+                3 -
+                  questions.filter(
+                    (q) => q.status === "pending" && q.author === user.id,
+                  ).length,
+              )}
+              )
             </span>
           )}
         </h2>
 
         {isJobClosedForQuestions ? (
           <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-3 sm:p-4 rounded-xl text-center text-sm sm:text-base">
-            🔒 დავალება დახურულია კომუნიკაციისთვის. გთხოვთ, დაუკავშირდით ტელეფონით.
+            🔒 დავალება დახურულია კომუნიკაციისთვის. გთხოვთ, დაუკავშირდით
+            ტელეფონით.
           </div>
         ) : (
           <>
             {questions.length === 0 ? (
-              <p className="text-gray-400 text-center py-3 sm:py-4 text-sm">ჯერ არ არის კითხვები</p>
+              <p className="text-gray-400 text-center py-3 sm:py-4 text-sm">
+                ჯერ არ არის კითხვები
+              </p>
             ) : (
               <div className="space-y-3 sm:space-y-4">
                 {questions.map((q) => {
@@ -602,13 +680,21 @@ function JobDetails() {
                     <div key={q._id} className="border-b border-gray-100 pb-3">
                       <div className="flex flex-wrap items-center justify-between gap-1 sm:gap-2 text-xs sm:text-sm">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-semibold text-indigo-600">{q.authorName}</span>
+                          <span className="font-semibold text-indigo-600">
+                            {q.authorName}
+                          </span>
                           <span className="text-gray-400 text-xs">
                             {new Date(q.createdAt).toLocaleString()}
                           </span>
-                          {q.editedAt && <span className="text-xs text-gray-400">(რედ.)</span>}
+                          {q.editedAt && (
+                            <span className="text-xs text-gray-400">
+                              (რედ.)
+                            </span>
+                          )}
                           {q.status === "answered" && (
-                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✅</span>
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                              ✅
+                            </span>
                           )}
                         </div>
                         {canEditQuestion && (
@@ -616,24 +702,40 @@ function JobDetails() {
                             onClick={() => {
                               const newText = prompt("რედაქტირება:", q.text);
                               if (newText && newText.trim()) {
-                                api.patch(`/questions/${q._id}`, { text: newText.trim() })
+                                api
+                                  .patch(`/questions/${q._id}`, {
+                                    text: newText.trim(),
+                                  })
                                   .then((res) => {
                                     const updated = res.data.data;
                                     setQuestions((prev) => {
                                       const updateTree = (items) =>
                                         items.map((item) => {
                                           if (item._id === q._id) {
-                                            return { ...item, text: updated.text, editedAt: updated.editedAt };
+                                            return {
+                                              ...item,
+                                              text: updated.text,
+                                              editedAt: updated.editedAt,
+                                            };
                                           }
                                           if (item.replies) {
-                                            return { ...item, replies: updateTree(item.replies) };
+                                            return {
+                                              ...item,
+                                              replies: updateTree(item.replies),
+                                            };
                                           }
                                           return item;
                                         });
                                       return updateTree(prev);
                                     });
                                   })
-                                  .catch((err) => alert("❌ " + (err.response?.data?.error || err.message)));
+                                  .catch((err) =>
+                                    alert(
+                                      "❌ " +
+                                        (err.response?.data?.error ||
+                                          err.message),
+                                    ),
+                                  );
                               }
                             }}
                             className="text-xs text-indigo-600 hover:text-indigo-800"
@@ -642,7 +744,9 @@ function JobDetails() {
                           </button>
                         )}
                       </div>
-                      <p className="text-gray-700 mt-1 text-sm sm:text-base">{q.text}</p>
+                      <p className="text-gray-700 mt-1 text-sm sm:text-base">
+                        {q.text}
+                      </p>
 
                       {/* Replies */}
                       {q.replies && q.replies.length > 0 && (
@@ -653,53 +757,89 @@ function JobDetails() {
                               <div key={r._id}>
                                 <div className="flex flex-wrap items-center justify-between gap-1 text-xs sm:text-sm">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-green-600">{r.authorName}</span>
+                                    <span className="font-semibold text-green-600">
+                                      {r.authorName}
+                                    </span>
                                     <span className="text-gray-400 text-xs">
                                       {new Date(r.createdAt).toLocaleString()}
                                     </span>
-                                    {r.editedAt && <span className="text-xs text-gray-400">(რედ.)</span>}
+                                    {r.editedAt && (
+                                      <span className="text-xs text-gray-400">
+                                        (რედ.)
+                                      </span>
+                                    )}
                                   </div>
                                   {isReplyAuthor && (
                                     <button
                                       onClick={() => {
-                                        const newText = prompt("რედაქტირება:", r.text);
+                                        const newText = prompt(
+                                          "რედაქტირება:",
+                                          r.text,
+                                        );
                                         if (newText && newText.trim()) {
-                                          api.patch(`/questions/${r._id}`, { text: newText.trim() })
+                                          api
+                                            .patch(`/questions/${r._id}`, {
+                                              text: newText.trim(),
+                                            })
                                             .then((res) => {
                                               const updated = res.data.data;
                                               setQuestions((prev) => {
                                                 const updateTree = (items) =>
                                                   items.map((item) => {
                                                     if (item._id === q._id) {
-                                                      const replies = item.replies.map((reply) =>
-                                                        reply._id === r._id
-                                                          ? { ...reply, text: updated.text, editedAt: updated.editedAt }
-                                                          : reply
-                                                      );
-                                                      return { ...item, replies };
+                                                      const replies =
+                                                        item.replies.map(
+                                                          (reply) =>
+                                                            reply._id === r._id
+                                                              ? {
+                                                                  ...reply,
+                                                                  text: updated.text,
+                                                                  editedAt:
+                                                                    updated.editedAt,
+                                                                }
+                                                              : reply,
+                                                        );
+                                                      return {
+                                                        ...item,
+                                                        replies,
+                                                      };
                                                     }
                                                     if (item.replies) {
-                                                      return { ...item, replies: updateTree(item.replies) };
+                                                      return {
+                                                        ...item,
+                                                        replies: updateTree(
+                                                          item.replies,
+                                                        ),
+                                                      };
                                                     }
                                                     return item;
                                                   });
                                                 return updateTree(prev);
                                               });
                                             })
-                                            .catch((err) => alert("❌ " + (err.response?.data?.error || err.message)));
-                                      }
-                                    }}
-                                    className="text-xs text-indigo-600 hover:text-indigo-800"
-                                  >
-                                    ✏️
-                                  </button>
-                                )}
+                                            .catch((err) =>
+                                              alert(
+                                                "❌ " +
+                                                  (err.response?.data?.error ||
+                                                    err.message),
+                                              ),
+                                            );
+                                        }
+                                      }}
+                                      className="text-xs text-indigo-600 hover:text-indigo-800"
+                                    >
+                                      ✏️
+                                    </button>
+                                  )}
+                                </div>
+                                <p className="text-gray-700 text-sm sm:text-base">
+                                  {r.text}
+                                </p>
                               </div>
-                              <p className="text-gray-700 text-sm sm:text-base">{r.text}</p>
-                            </div>
-                          );
-                        })}
-                      </div>
+                            );
+                          })}
+                        </div>
+                      )}
 
                       {/* Reply form */}
                       {isJobOwner && q.status === "pending" && (
@@ -709,7 +849,10 @@ function JobDetails() {
                             placeholder="უპასუხეთ..."
                             value={replyText[q._id] || ""}
                             onChange={(e) =>
-                              setReplyText((prev) => ({ ...prev, [q._id]: e.target.value }))
+                              setReplyText((prev) => ({
+                                ...prev,
+                                [q._id]: e.target.value,
+                              }))
                             }
                             onKeyDown={(e) => {
                               if (e.key === "Enter" && !e.shiftKey) {
@@ -739,19 +882,26 @@ function JobDetails() {
               <>
                 {(() => {
                   const pendingCount = questions.filter(
-                    (q) => q.status === "pending" && q.author === user.id
+                    (q) => q.status === "pending" && q.author === user.id,
                   ).length;
                   const canAsk = pendingCount < 3;
                   return (
-                    <form onSubmit={handleSubmitQuestion} className="mt-3 sm:mt-4 flex gap-2">
+                    <form
+                      onSubmit={handleSubmitQuestion}
+                      className="mt-3 sm:mt-4 flex gap-2"
+                    >
                       <input
                         type="text"
-                        placeholder={canAsk ? "დასვით კითხვა..." : "3 დაუსრულებელი კითხვა"}
+                        placeholder={
+                          canAsk ? "დასვით კითხვა..." : "3 დაუსრულებელი კითხვა"
+                        }
                         value={questionText}
                         onChange={(e) => setQuestionText(e.target.value)}
                         disabled={!canAsk}
                         className={`flex-1 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none ${
-                          !canAsk ? "bg-gray-100 text-gray-400" : "border-gray-300"
+                          !canAsk
+                            ? "bg-gray-100 text-gray-400"
+                            : "border-gray-300"
                         }`}
                       />
                       <button
