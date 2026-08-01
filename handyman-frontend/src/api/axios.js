@@ -1,10 +1,10 @@
 // src/api/axios.js
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: "https://handyman-back-ulm6.onrender.com/api", // 🔥 Render-ის URL
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
