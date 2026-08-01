@@ -25,39 +25,39 @@ function Login() {
   };
 
   return (
-    <div className="container mx-auto max-w-md p-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">🔐 შესვლა</h1>
+    <div className="container mx-auto px-4 py-8 max-w-md">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">🔐 შესვლა</h1>
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4 text-sm">
           {error}
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Email *"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full border p-3 rounded"
+          className="w-full border p-3 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         />
         <input
           type="password"
-          placeholder="პაროლი"
+          placeholder="პაროლი *"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full border p-3 rounded"
+          className="w-full border p-3 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 text-white p-3 rounded font-bold hover:bg-indigo-700 disabled:opacity-50"
+          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition disabled:opacity-50 text-sm sm:text-base"
         >
           {loading ? "იტვირთება..." : "შესვლა"}
         </button>
       </form>
-      <p className="mt-4 text-center">
+      <p className="mt-4 text-center text-sm">
         არ გაქვთ ანგარიში?{" "}
         <Link to="/register" className="text-indigo-600 hover:underline">
           რეგისტრაცია
@@ -66,5 +66,4 @@ function Login() {
     </div>
   );
 }
-
 export default Login;
