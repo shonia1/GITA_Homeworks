@@ -1,6 +1,4 @@
 // models/Bid.js
-// Bid schema - craftsman's offer on a job.
-
 const mongoose = require("mongoose");
 
 const bidSchema = new mongoose.Schema(
@@ -30,13 +28,22 @@ const bidSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected"],
+      enum: ["pending", "accepted_pending", "accepted", "rejected"],
       default: "pending",
+    },
+    craftsman: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    acceptedAt: {
+      type: Date,
+      default: null,
     },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 module.exports = mongoose.model("Bid", bidSchema);

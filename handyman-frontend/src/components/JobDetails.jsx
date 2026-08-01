@@ -1,121 +1,478 @@
 // src/components/JobDetails.jsx
-// Displays a single job with all details, its bids, and allows status update.
-
-import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import api from '../api/axios';
-import BidForm from './BidForm';
+import { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
+import BidForm from "./BidForm";
+import { useAuth } from "../hooks/useAuth";
 
 function JobDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [job, setJob] = useState(null);
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [bidsError, setBidsError] = useState(null);
+  const [bidsLoading, setBidsLoading] = useState(false);
+  const [processingBid, setProcessingBid] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
-  // ── 1. Fetch job + bids ──────────────────────
-  useEffect(() => {
-    const fetchJobAndBids = async () => {
-      try {
-        const jobRes = await api.get(`/jobs/${id}`);
-        setJob(jobRes.data.data);
+  // Questions
+  const [questions, setQuestions] = useState([]);
+  const [questionText, setQuestionText] = useState("");
+  const [questionSubmitting, setQuestionSubmitting] = useState(false);
+  const [replyText, setReplyText] = useState({});
+  const [replySubmitting, setReplySubmitting] = useState({});
 
-        const bidsRes = await api.get(`/bids/job/${id}`);
+  // Timer for accepted_pending
+  const [acceptedBidId, setAcceptedBidId] = useState(null);
+  const [timer, setTimer] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
+
+  // ── Data fetching ──────────────────────────────
+  const fetchData = async () => {
+    try {
+      const [jobRes, bidsRes] = await Promise.all([
+        api.get(`/jobs/${id}`),
+        user
+          ? api.get(`/bids/job/${id}`).catch((err) => {
+              if (err.response?.status === 404) {
+                setBidsError("ჯერ არ არის შეთავაზებები");
+                return { data: { data: [] } };
+              }
+              throw err;
+            })
+          : Promise.resolve({ data: { data: [] } }),
+      ]);
+      setJob(jobRes.data.data);
+      if (bidsRes && bidsRes.data) {
         setBids(bidsRes.data.data);
+        setBidsError(null);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setLoading(false);
+  useEffect(() => {
+    fetchData();
+  }, [id, user]);
+
+  // ── Fetch questions ──────────────────────────────
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const res = await api.get(`/questions/job/${id}`);
+        setQuestions(res.data.data);
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        console.error("Error fetching questions:", err);
       }
     };
-    fetchJobAndBids();
+    fetchQuestions();
   }, [id]);
 
-  // ── 2. Toggle job status ──────────────────────
-  const handleStatusToggle = async () => {
-    // Determine new status
-    const newStatus = job.status === 'open' ? 'completed' : 'open';
-    const action = newStatus === 'completed' ? 'დახურვა' : 'გახსნა';
+  // ── Timer for accepted_pending ──────────────────
+  useEffect(() => {
+    if (!user || user.role !== "craftsman") return;
+    const acceptedBid = bids.find(
+      (b) => b.craftsman === user.id && b.status === "accepted_pending",
+    );
+    if (acceptedBid) {
+      setAcceptedBidId(acceptedBid._id);
+      const now = new Date();
+      const acceptedAt = new Date(acceptedBid.acceptedAt);
+      const elapsed = (now - acceptedAt) / 1000;
+      const remaining = Math.max(0, 300 - elapsed);
+      setTimer(Math.floor(remaining));
 
-    if (!window.confirm(`დარწმუნებული ხართ, რომ გსურთ დავალების "${action}"?`)) {
+      if (timerInterval) clearInterval(timerInterval);
+      const interval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            fetchData();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setTimerInterval(interval);
+
+      return () => clearInterval(interval);
+    } else {
+      if (timerInterval) clearInterval(timerInterval);
+      setTimerInterval(null);
+      setTimer(0);
+      setAcceptedBidId(null);
+    }
+  }, [bids, user]);
+
+  // ── Handlers ────────────────────────────────────
+  const handleStatusChange = async (newStatus) => {
+    if (!user) {
+      alert("გთხოვთ, გაიარეთ ავტორიზაცია");
       return;
     }
-
+    const actionMap = { completed: "დასრულება", cancelled: "გაუქმება" };
+    if (
+      !window.confirm(
+        `დარწმუნებული ხართ, რომ გსურთ დავალების "${actionMap[newStatus]}"?`,
+      )
+    ) {
+      return;
+    }
     setUpdating(true);
     try {
       const response = await api.patch(`/jobs/${id}`, { status: newStatus });
-      setJob(response.data.data); // update UI
+      setJob(response.data.data);
+      if (newStatus === "completed") {
+        navigate("/");
+      }
     } catch (err) {
-      alert('❌ შეცდომა: ' + (err.response?.data?.error || err.message));
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
     } finally {
       setUpdating(false);
     }
   };
 
-  // ── 3. Loading / Error states ──────────────────
-  if (loading) {
-    return <div className="flex justify-center items-center h-64 text-gray-500">იტვირთება...</div>;
-  }
+  const handleBidStatus = async (bidId, status) => {
+    if (!user) return;
+    setProcessingBid(bidId);
+    try {
+      const response = await api.patch(`/bids/${bidId}/status`, { status });
+      setBids((prev) =>
+        prev.map((b) => (b._id === bidId ? response.data.data : b)),
+      );
+      if (status === "accepted") {
+        const jobRes = await api.get(`/jobs/${id}`);
+        setJob(jobRes.data.data);
+      }
+    } catch (err) {
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
+    } finally {
+      setProcessingBid(null);
+    }
+  };
 
+  const handleDelete = async () => {
+    if (
+      !window.confirm(
+        "დარწმუნებული ხართ, რომ გსურთ ამ დავალების წაშლა? ეს მოქმედება შეუქცევადია!",
+      )
+    ) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      await api.delete(`/jobs/${id}`);
+      navigate("/");
+    } catch (err) {
+      alert("❌ წაშლის შეცდომა: " + (err.response?.data?.error || err.message));
+      setDeleting(false);
+    }
+  };
+
+  const handleAcceptJob = async () => {
+    if (!user) {
+      alert("გთხოვთ, გაიარეთ ავტორიზაცია");
+      return;
+    }
+    if (!window.confirm(`დარწმუნებული ხართ, რომ გსურთ ამ დავალების აღება?`)) {
+      return;
+    }
+    setUpdating(true);
+    try {
+      const response = await api.post(`/jobs/${id}/accept`);
+      setJob(response.data.data.job);
+      const newBid = response.data.data.bid;
+      setBids((prev) => [newBid, ...prev]);
+    } catch (err) {
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleCancelBid = async () => {
+    if (!acceptedBidId) return;
+    if (!window.confirm("დარწმუნებული ხართ, რომ გსურთ შეთავაზების გაუქმება?"))
+      return;
+    setIsCancelling(true);
+    try {
+      await api.post(`/bids/${acceptedBidId}/cancel`);
+      await fetchData();
+    } catch (err) {
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  const handleConfirmBid = async () => {
+    if (!acceptedBidId) return;
+    if (!window.confirm("დარწმუნებული ხართ, რომ გსურთ დავალების დადასტურება?"))
+      return;
+    setIsConfirming(true);
+    try {
+      await api.post(`/bids/${acceptedBidId}/confirm`);
+      await fetchData();
+    } catch (err) {
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
+  // ── Question handlers ────────────────────────────
+  const handleSubmitQuestion = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      alert("გთხოვთ, გაიარეთ ავტორიზაცია");
+      return;
+    }
+    if (!questionText.trim()) return;
+
+    if (user.role === "craftsman") {
+      const pendingCount = questions.filter(
+        (q) => q.status === "pending" && q.author === user.id,
+      ).length;
+      if (pendingCount >= 3) {
+        alert("თქვენ გაქვთ 3 დაუსრულებელი კითხვა. გთხოვთ, დაელოდოთ პასუხს.");
+        return;
+      }
+    }
+
+    setQuestionSubmitting(true);
+    try {
+      const res = await api.post("/questions", { job: id, text: questionText });
+      setQuestions((prev) => [...prev, res.data.data]);
+      setQuestionText("");
+    } catch (err) {
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
+    } finally {
+      setQuestionSubmitting(false);
+    }
+  };
+
+  const handleSubmitReply = async (questionId) => {
+    const text = replyText[questionId];
+    if (!text || !text.trim()) return;
+
+    const findQuestion = (items) => {
+      for (const item of items) {
+        if (item._id === questionId) return item;
+        if (item.replies) {
+          const found = findQuestion(item.replies);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    const question = findQuestion(questions);
+    if (question && question.status === "answered") {
+      alert("ამ კითხვაზე უკვე უპასუხა კლიენტმა.");
+      return;
+    }
+
+    setReplySubmitting((prev) => ({ ...prev, [questionId]: true }));
+    try {
+      const res = await api.post(`/questions/${questionId}/reply`, { text });
+      setQuestions((prev) => {
+        const updateTree = (items) =>
+          items.map((item) => {
+            if (item._id === questionId) {
+              const replies = item.replies || [];
+              const newReply = res.data.data;
+              if (newReply.status === "answered") {
+                return {
+                  ...item,
+                  status: "answered",
+                  replies: [...replies, newReply],
+                };
+              }
+              return { ...item, replies: [...replies, newReply] };
+            }
+            if (item.replies) {
+              return { ...item, replies: updateTree(item.replies) };
+            }
+            return item;
+          });
+        return updateTree(prev);
+      });
+      setReplyText((prev) => ({ ...prev, [questionId]: "" }));
+    } catch (err) {
+      alert("❌ შეცდომა: " + (err.response?.data?.error || err.message));
+    } finally {
+      setReplySubmitting((prev) => ({ ...prev, [questionId]: false }));
+    }
+  };
+
+  // ── Timer formatting ──────────────────────────────
+  const formatTimer = (seconds) => {
+    if (seconds > 240) return "5 წთ";
+    if (seconds > 180) return "4 წთ";
+    if (seconds > 120) return "3 წთ";
+    if (seconds > 60) return "2 წთ";
+    if (seconds > 0) return "<1 წთ";
+    return "0 წთ";
+  };
+
+  // ── Loading / Error ──────────────────────────────
+  if (loading && !job) {
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        იტვირთება...
+      </div>
+    );
+  }
   if (error) {
-    return <div className="text-red-500 text-center py-10">შეცდომა: {error}</div>;
+    return (
+      <div className="text-red-500 text-center py-10">შეცდომა: {error}</div>
+    );
   }
-
   if (!job) {
-    return <div className="text-center py-10 text-gray-500">დავალება არ მოიძებნა</div>;
+    return (
+      <div className="text-center py-10 text-gray-500">
+        დავალება არ მოიძებნა
+      </div>
+    );
   }
 
-  // ── 4. Render ──────────────────────────────────
+  const isOwner = user && job.client === user.id;
+  const isCraftsman = user && user.role === "craftsman";
+
+  // Check for accepted or accepted_pending bids
+  const acceptedBid = bids.find(
+    (b) => b.status === "accepted" || b.status === "accepted_pending",
+  );
+  const isCraftsmanAccepted = acceptedBid && acceptedBid.craftsman === user?.id;
+  const isPendingConfirmation =
+    acceptedBid && acceptedBid.status === "accepted_pending";
+  const canCancel = isPendingConfirmation && timer > 0;
+  const canConfirm = isPendingConfirmation;
+
+  // 🔥 Determine if Questions section should be disabled
+  const isJobClosedForQuestions =
+    (job.status === "assigned" || job.status === "completed") &&
+    acceptedBid?.status === "accepted";
+
+  const getStatusBadge = () => {
+    switch (job.status) {
+      case "open":
+        return { label: "🟢 ღია", color: "bg-green-100 text-green-700" };
+      case "assigned":
+        return { label: "🔄 მიმდინარე", color: "bg-blue-100 text-blue-700" };
+      case "completed":
+        return { label: "🔒 დასრულებული", color: "bg-gray-100 text-gray-700" };
+      case "cancelled":
+        return { label: "❌ გაუქმებული", color: "bg-red-100 text-red-700" };
+      default:
+        return { label: job.status, color: "bg-gray-100 text-gray-700" };
+    }
+  };
+  const statusBadge = getStatusBadge();
+
+  // ── Render ──────────────────────────────────────
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
-      {/* Back link */}
-      <Link to="/" className="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-4">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <Link
+        to="/"
+        className="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-4"
+      >
         ← უკან დაბრუნება
       </Link>
 
-      {/* ─── JOB CARD ─── */}
+      {/* JOB CARD */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 md:p-8">
-        {/* Header: Title + Status + Action button */}
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-3xl font-bold text-gray-800">{job.title}</h1>
-
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Status badge */}
             <span
-              className={`text-sm font-semibold px-4 py-1.5 rounded-full ${
-                job.status === 'open'
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-700'
-              }`}
+              className={`text-sm font-semibold px-4 py-1.5 rounded-full ${statusBadge.color}`}
             >
-              {job.status === 'open' ? '🟢 ღია' : '🔒 დასრულებული'}
+              {statusBadge.label}
             </span>
 
-            {/* Toggle button – only for open/completed */}
-            {(job.status === 'open' || job.status === 'completed') && (
+            {/* Client (owner) actions */}
+            {isOwner && (
+              <div className="flex gap-2">
+                {(job.status === "open" || job.status === "assigned") && (
+                  <>
+                    <button
+                      onClick={() => handleStatusChange("completed")}
+                      disabled={updating}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                    >
+                      ✅ დასრულება
+                    </button>
+                    <button
+                      onClick={() => handleStatusChange("cancelled")}
+                      disabled={updating}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                    >
+                      ❌ გაუქმება
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                >
+                  {deleting ? "..." : "🗑 წაშლა"}
+                </button>
+              </div>
+            )}
+
+            {/* Craftsman actions */}
+            {isCraftsman && job.status === "open" && !acceptedBid && (
               <button
-                onClick={handleStatusToggle}
+                onClick={handleAcceptJob}
                 disabled={updating}
-                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${
-                  job.status === 'open'
-                    ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                    : 'bg-green-100 text-green-700 hover:bg-green-200'
-                }`}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold transition disabled:opacity-50"
               >
-                {updating
-                  ? '...'
-                  : job.status === 'open'
-                  ? '🔒 დახურვა'
-                  : '🔓 გახსნა'}
+                {updating ? "..." : "✅ აღება"}
               </button>
+            )}
+            {isCraftsmanAccepted && (
+              <div className="flex items-center gap-2 flex-wrap">
+                {canConfirm && (
+                  <button
+                    onClick={handleConfirmBid}
+                    disabled={isConfirming}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                  >
+                    {isConfirming ? "..." : "✅ დადასტურება"}
+                  </button>
+                )}
+                {canCancel && (
+                  <button
+                    onClick={handleCancelBid}
+                    disabled={isCancelling}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                  >
+                    {isCancelling
+                      ? "..."
+                      : `⏳ გაუქმება (${formatTimer(timer)})`}
+                  </button>
+                )}
+                {!canCancel && !canConfirm && (
+                  <span className="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-lg text-sm font-semibold">
+                    თქვენ აიღეთ
+                  </span>
+                )}
+              </div>
             )}
           </div>
         </div>
 
-        {/* Category + District */}
         <div className="flex flex-wrap gap-3 mt-3">
           <span className="bg-indigo-50 text-indigo-700 text-sm px-3 py-1 rounded-full">
             {job.category}
@@ -125,43 +482,106 @@ function JobDetails() {
           </span>
         </div>
 
-        {/* Description */}
         <div className="mt-6">
           <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
             {job.description}
           </p>
         </div>
 
-        {/* Budget highlight */}
         <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg flex justify-between items-center">
           <span className="text-gray-600">💰 შეთავაზებული ბიუჯეტი</span>
-          <span className="text-3xl font-bold text-green-700">{job.budget} GEL</span>
+          <span className="text-3xl font-bold text-green-700">
+            {job.budget} GEL
+          </span>
         </div>
 
         {/* Client info */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm border-t border-gray-100 pt-6">
           <div>
             <span className="text-gray-500">კლიენტი</span>
-            <p className="font-semibold">{job.clientName}</p>
+            <p className="font-semibold">
+              {!user
+                ? "🔒 სავალდებულოა ავტორიზაცია"
+                : isOwner || acceptedBid?.status === "accepted"
+                  ? job.clientName
+                  : isCraftsman && acceptedBid?.status === "accepted_pending"
+                    ? `⏳ ლოდინი (${formatTimer(timer)})`
+                    : "🔒 სავალდებულოა ავტორიზაცია"}
+            </p>
           </div>
           <div>
             <span className="text-gray-500">ტელეფონი</span>
-            <p className="font-semibold">{job.clientPhone}</p>
+            <p className="font-semibold">
+              {!user
+                ? "🔒 სავალდებულოა ავტორიზაცია"
+                : isOwner || acceptedBid?.status === "accepted"
+                  ? job.clientPhone
+                  : isCraftsman && acceptedBid?.status === "accepted_pending"
+                    ? `⏳ ლოდინი (${formatTimer(timer)})`
+                    : "🔒 სავალდებულოა ავტორიზაცია"}
+            </p>
           </div>
           <div>
             <span className="text-gray-500">გამოქვეყნდა</span>
-            <p className="font-semibold">{new Date(job.createdAt).toLocaleDateString()}</p>
+            <p className="font-semibold">
+              {new Date(job.createdAt).toLocaleDateString()}
+            </p>
           </div>
+          {job.address && (
+            <div>
+              <span className="text-gray-500">მისამართი</span>
+              <p className="font-semibold">
+                {!user
+                  ? "🔒 სავალდებულოა ავტორიზაცია"
+                  : isOwner || acceptedBid?.status === "accepted"
+                    ? job.address
+                    : isCraftsman && acceptedBid?.status === "accepted_pending"
+                      ? `⏳ ლოდინი (${formatTimer(timer)})`
+                      : "🔒 სავალდებულოა ავტორიზაცია"}
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* Craftsman info – visible to client when job is assigned/completed and bid accepted */}
+        {isOwner &&
+          acceptedBid &&
+          acceptedBid.status === "accepted" &&
+          (job.status === "assigned" || job.status === "completed") && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h3 className="text-sm font-semibold text-blue-700 mb-2">
+                👷 ხელოსნის ინფორმაცია
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-gray-500">სახელი</span>
+                  <p className="font-semibold">{acceptedBid.craftsmanName}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">ტელეფონი</span>
+                  <p className="font-semibold">{acceptedBid.craftsmanPhone}</p>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
 
-      {/* ─── BIDS SECTION ─── */}
+      {/* BIDS SECTION */}
       <div className="mt-10">
         <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          📩 შეთავაზებები <span className="text-sm font-normal text-gray-500">({bids.length})</span>
+          📩 შეთავაზებები{" "}
+          <span className="text-sm font-normal text-gray-500">
+            ({bids.length})
+          </span>
         </h2>
 
-        {bids.length === 0 ? (
+        {bidsError ? (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-xl mt-4 text-center">
+            {bidsError}
+          </div>
+        ) : bidsLoading ? (
+          <div className="text-center text-gray-400 mt-4">იტვირთება...</div>
+        ) : bids.length === 0 ? (
           <div className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-8 text-center text-gray-400 mt-4">
             ჯერ არ არის შეთავაზებები
           </div>
@@ -174,29 +594,356 @@ function JobDetails() {
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-bold text-gray-800">{bid.craftsmanName}</p>
-                    <p className="text-sm text-gray-500">{bid.craftsmanPhone}</p>
+                    <p className="font-bold text-gray-800">
+                      {bid.craftsmanName}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {bid.craftsmanPhone}
+                    </p>
                     <p className="text-gray-600 mt-2">{bid.message}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-green-600">{bid.offeredPrice} GEL</p>
+                    <p className="text-xl font-bold text-green-600">
+                      {bid.offeredPrice} GEL
+                    </p>
                     <span className="inline-block text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full mt-1">
                       {bid.status}
                     </span>
                   </div>
                 </div>
+
+                {isOwner && bid.status === "pending" && (
+                  <div className="mt-4 border-t border-gray-100 pt-4 flex gap-3">
+                    <button
+                      onClick={() => handleBidStatus(bid._id, "accepted")}
+                      disabled={processingBid === bid._id}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                    >
+                      ✅ დათანხმება
+                    </button>
+                    <button
+                      onClick={() => handleBidStatus(bid._id, "rejected")}
+                      disabled={processingBid === bid._id}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                    >
+                      ❌ უარყოფა
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
 
-        {/* ─── BID FORM ─── */}
-        <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
-          <BidForm
-            jobId={id}
-            onBidAdded={(newBid) => setBids([...bids, newBid])}
-          />
-        </div>
+        {isCraftsman && job.status === "open" && !acceptedBid && (
+          <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
+            <BidForm
+              jobId={id}
+              onBidAdded={(newBid) => setBids([...bids, newBid])}
+            />
+          </div>
+        )}
+        {user && user.role !== "craftsman" && job.status === "open" && (
+          <div className="mt-6 bg-gray-50 border border-gray-200 p-4 rounded-xl text-center text-gray-500">
+            შეთავაზების დატოვება მხოლოდ ხელოსნებისთვისაა შესაძლებელი
+          </div>
+        )}
+      </div>
+
+      {/* ─── QUESTIONS & ANSWERS ─── */}
+      <div className="mt-10 bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+          💬 კითხვები და პასუხები
+          {user && user.role === "craftsman" && !isJobClosedForQuestions && (
+            <span className="text-sm font-normal text-gray-500 ml-2">
+              (დარჩენილი კითხვები:{" "}
+              {Math.max(
+                0,
+                3 -
+                  questions.filter(
+                    (q) => q.status === "pending" && q.author === user.id,
+                  ).length,
+              )}
+              )
+            </span>
+          )}
+        </h2>
+
+        {/* 🔥 If job is closed for questions, show info message */}
+        {isJobClosedForQuestions ? (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-xl text-center">
+            🔒 დავალება დახურულია კომუნიკაციისთვის. გთხოვთ, დაუკავშირდეთ
+            ტელეფონით.
+          </div>
+        ) : (
+          <>
+            {questions.length === 0 ? (
+              <p className="text-gray-400 text-center py-4">
+                ჯერ არ არის კითხვები
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {questions.map((q) => {
+                  const isAuthor = user && q.author === user.id;
+                  const isPending = q.status === "pending";
+                  const canEditQuestion = isAuthor && isPending && !q.parent;
+                  const isJobOwner = user && job && job.client === user.id;
+
+                  return (
+                    <div key={q._id} className="border-b border-gray-100 pb-3">
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-indigo-600">
+                            {q.authorName}
+                          </span>
+                          <span className="text-gray-400 text-xs">
+                            {new Date(q.createdAt).toLocaleString()}
+                          </span>
+                          {q.editedAt && (
+                            <span className="text-xs text-gray-400">
+                              (რედაქტირებულია)
+                            </span>
+                          )}
+                          {q.status === "answered" && (
+                            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                              ✅ უპასუხა კლიენტმა
+                            </span>
+                          )}
+                        </div>
+                        {canEditQuestion && (
+                          <button
+                            onClick={() => {
+                              const newText = prompt("რედაქტირება:", q.text);
+                              if (newText && newText.trim()) {
+                                api
+                                  .patch(`/questions/${q._id}`, {
+                                    text: newText.trim(),
+                                  })
+                                  .then((res) => {
+                                    const updated = res.data.data;
+                                    setQuestions((prev) => {
+                                      const updateTree = (items) =>
+                                        items.map((item) => {
+                                          if (item._id === q._id) {
+                                            return {
+                                              ...item,
+                                              text: updated.text,
+                                              editedAt: updated.editedAt,
+                                            };
+                                          }
+                                          if (item.replies) {
+                                            return {
+                                              ...item,
+                                              replies: updateTree(item.replies),
+                                            };
+                                          }
+                                          return item;
+                                        });
+                                      return updateTree(prev);
+                                    });
+                                  })
+                                  .catch((err) =>
+                                    alert(
+                                      "❌ " +
+                                        (err.response?.data?.error ||
+                                          err.message),
+                                    ),
+                                  );
+                              }
+                            }}
+                            className="text-xs text-indigo-600 hover:text-indigo-800"
+                          >
+                            ✏️ რედაქტირება
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-gray-700 mt-1">{q.text}</p>
+
+                      {/* Replies */}
+                      {q.replies && q.replies.length > 0 && (
+                        <div className="ml-6 mt-3 space-y-2 border-l-2 border-gray-200 pl-4">
+                          {q.replies.map((r) => {
+                            const isReplyAuthor = user && r.author === user.id;
+                            const canEditReply = isReplyAuthor;
+
+                            return (
+                              <div key={r._id}>
+                                <div className="flex items-center justify-between gap-2 text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-green-600">
+                                      {r.authorName}
+                                    </span>
+                                    <span className="text-gray-400 text-xs">
+                                      {new Date(r.createdAt).toLocaleString()}
+                                    </span>
+                                    {r.editedAt && (
+                                      <span className="text-xs text-gray-400">
+                                        (რედაქტირებულია)
+                                      </span>
+                                    )}
+                                  </div>
+                                  {canEditReply && (
+                                    <button
+                                      onClick={() => {
+                                        const newText = prompt(
+                                          "რედაქტირება:",
+                                          r.text,
+                                        );
+                                        if (newText && newText.trim()) {
+                                          api
+                                            .patch(`/questions/${r._id}`, {
+                                              text: newText.trim(),
+                                            })
+                                            .then((res) => {
+                                              const updated = res.data.data;
+                                              setQuestions((prev) => {
+                                                const updateTree = (items) =>
+                                                  items.map((item) => {
+                                                    if (item._id === q._id) {
+                                                      const replies =
+                                                        item.replies.map(
+                                                          (reply) =>
+                                                            reply._id === r._id
+                                                              ? {
+                                                                  ...reply,
+                                                                  text: updated.text,
+                                                                  editedAt:
+                                                                    updated.editedAt,
+                                                                }
+                                                              : reply,
+                                                        );
+                                                      return {
+                                                        ...item,
+                                                        replies,
+                                                      };
+                                                    }
+                                                    if (item.replies) {
+                                                      return {
+                                                        ...item,
+                                                        replies: updateTree(
+                                                          item.replies,
+                                                        ),
+                                                      };
+                                                    }
+                                                    return item;
+                                                  });
+                                                return updateTree(prev);
+                                              });
+                                            })
+                                            .catch((err) =>
+                                              alert(
+                                                "❌ " +
+                                                  (err.response?.data?.error ||
+                                                    err.message),
+                                              ),
+                                            );
+                                        }
+                                      }}
+                                      className="text-xs text-indigo-600 hover:text-indigo-800"
+                                    >
+                                      ✏️ რედაქტირება
+                                    </button>
+                                  )}
+                                </div>
+                                <p className="text-gray-700 mt-1">{r.text}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Reply form – only for job owner (client) and ONLY if pending */}
+                      {isJobOwner && q.status === "pending" && (
+                        <div className="mt-2 flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="უპასუხეთ..."
+                            value={replyText[q._id] || ""}
+                            onChange={(e) =>
+                              setReplyText((prev) => ({
+                                ...prev,
+                                [q._id]: e.target.value,
+                              }))
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSubmitReply(q._id);
+                              }
+                            }}
+                            className="flex-1 border border-gray-300 p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                          />
+                          <button
+                            onClick={() => handleSubmitReply(q._id)}
+                            disabled={replySubmitting[q._id]}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50"
+                          >
+                            {replySubmitting[q._id] ? "..." : "გაგზავნა"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* New Question Form – only for craftsman, with 3-pending limit */}
+            {user && user.role === "craftsman" && !isJobClosedForQuestions && (
+              <>
+                {(() => {
+                  const pendingCount = questions.filter(
+                    (q) => q.status === "pending" && q.author === user.id,
+                  ).length;
+                  const canAsk = pendingCount < 3;
+                  return (
+                    <form
+                      onSubmit={handleSubmitQuestion}
+                      className="mt-4 flex gap-2"
+                    >
+                      <input
+                        type="text"
+                        placeholder={
+                          canAsk
+                            ? "დასვით კითხვა..."
+                            : "თქვენ გაქვთ 3 დაუსრულებელი კითხვა. გთხოვთ, დაელოდოთ პასუხს."
+                        }
+                        value={questionText}
+                        onChange={(e) => setQuestionText(e.target.value)}
+                        disabled={!canAsk}
+                        className={`flex-1 border p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition ${
+                          !canAsk
+                            ? "bg-gray-100 text-gray-400"
+                            : "border-gray-300"
+                        }`}
+                      />
+                      <button
+                        type="submit"
+                        disabled={!canAsk || questionSubmitting}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {questionSubmitting ? "..." : "კითხვა"}
+                      </button>
+                    </form>
+                  );
+                })()}
+              </>
+            )}
+
+            {/* Client can ONLY reply, not ask questions */}
+            {user && user.role === "client" && !isJobClosedForQuestions && (
+              <p className="text-sm text-gray-500 mt-4 text-center">
+                თქვენ შეგიძლიათ უპასუხოთ ხელოსნის კითხვებს (იხ. ზემოთ).
+              </p>
+            )}
+
+            {!user && (
+              <p className="text-sm text-gray-400 mt-4 text-center">
+                კითხვის დასმისთვის გაიარეთ ავტორიზაცია
+              </p>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

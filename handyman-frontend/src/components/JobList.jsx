@@ -2,8 +2,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
+import { useAuth } from '../hooks/useAuth';
+import TelegramBanner from './TelegramBanner';
 
 function JobList() {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,21 +15,36 @@ function JobList() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalJobs, setTotalJobs] = useState(0);
-  const limit = 6;
+  const [showArchived, setShowArchived] = useState(false);
+  const [filterByCity, setFilterByCity] = useState(true);
+  const limit = 6; // 🔥 limit ცვლადი
 
-  // ── Fetch jobs inside useEffect ────────────────
+  const getCityParam = () => {
+    if (user && user.role === "craftsman" && filterByCity) {
+      return user.cities && user.cities.length > 0 ? user.cities[0] : "";
+    }
+    return "";
+  };
+
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       try {
-        const response = await api.get('/jobs', {
-          params: {
-            page,
-            limit,
-            search: search.trim(),
-            category,
-          },
-        });
+        const params = {
+          page,
+          limit,
+          search: search.trim(),
+          category,
+          showArchived,
+        };
+        const city = getCityParam();
+        if (city) params.city = city;
+
+        if (user && user.role === 'client') {
+          params.myJobs = true;
+        }
+
+        const response = await api.get('/jobs', { params });
         setJobs(response.data.data);
         setTotalPages(response.data.pagination.pages);
         setTotalJobs(response.data.pagination.total);
@@ -38,9 +56,9 @@ function JobList() {
     };
 
     fetchJobs();
-  }, [page, search, category]); // <-- dependencies
+  }, [page, search, category, user, showArchived, filterByCity]);
 
-  // ── Handlers ────────────────────────────────────
+  // ── Handlers ──────────────────────────────────
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
     setPage(1);
@@ -65,7 +83,7 @@ function JobList() {
     if (page < totalPages) setPage(page + 1);
   };
 
-  // ── Loading / Error ─────────────────────────────
+  // ── Loading / Error ──────────────────────────
   if (loading) {
     return <div className="flex justify-center items-center h-64 text-gray-500">იტვირთება...</div>;
   }
@@ -74,20 +92,48 @@ function JobList() {
     return <div className="text-red-500 text-center py-10">შეცდომა: {error}</div>;
   }
 
-  const categories = [...new Set(jobs.map((job) => job.category))];
-
-  // ── Render ──────────────────────────────────────
+  // ── Render ────────────────────────────────────
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      {/* Header */}
+      <TelegramBanner />
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">📋 დავალებები</h1>
-        <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold">
-          {totalJobs} ცალი
-        </span>
+        <h1 className="text-3xl font-bold text-gray-800">
+          {user && user.role === 'client' ? '📋 ჩემი დავალებები' : '📋 დავალებები'}
+        </h1>
+        <div className="flex items-center gap-4 flex-wrap">
+          <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold">
+            {totalJobs} ცალი
+          </span>
+          
+          {user && user.role === "craftsman" && user.cities && user.cities.length > 0 && (
+            <button
+              onClick={() => setFilterByCity(!filterByCity)}
+              className={`text-sm px-3 py-1 rounded-lg transition ${
+                filterByCity
+                  ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {filterByCity ? '📍 ჩემი ქალაქები' : '📍 ყველა ქალაქი'}
+            </button>
+          )}
+
+          {user && user.role === 'client' && (
+            <button
+              onClick={() => setShowArchived(!showArchived)}
+              className={`text-sm px-3 py-1 rounded-lg transition ${
+                showArchived
+                  ? 'bg-gray-600 text-white hover:bg-gray-700'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {showArchived ? '📂 არქივი' : '📂 აჩვენე არქივი'}
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Search + Filter Bar */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row gap-4 items-stretch md:items-center">
         <input
           type="text"
@@ -102,7 +148,7 @@ function JobList() {
           className="border border-gray-300 px-4 py-2 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition min-w-[150px]"
         >
           <option value="">ყველა კატეგორია</option>
-          {categories.map((cat) => (
+          {[...new Set(jobs.map((job) => job.category))].map((cat) => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
@@ -116,15 +162,25 @@ function JobList() {
         )}
       </div>
 
-      {/* Job Cards */}
       {jobs.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
           <p className="text-gray-400 text-xl">
-            {search || category ? '☝️ ვერაფერი მოიძებნა ფილტრების მიხედვით' : '🤷‍♂️ ჯერ არ არის დავალებები'}
+            {user && user.role === 'client'
+              ? showArchived
+                ? '📭 არქივში არ არის დავალებები'
+                : '📭 თქვენ ჯერ არ გაგივრცელებიათ დავალება'
+              : (search || category ? '☝️ ვერაფერი მოიძებნა ფილტრების მიხედვით' : '🤷‍♂️ ჯერ არ არის დავალებები')}
           </p>
-          <Link to="/post-job" className="text-indigo-600 hover:underline mt-2 inline-block">
-            {search || category ? 'ყველა დავალების ნახვა' : 'შექმენით პირველი!'}
-          </Link>
+          {user && user.role === 'client' && !showArchived && (
+            <Link to="/post-job" className="text-indigo-600 hover:underline mt-2 inline-block">
+              + დაამატეთ პირველი დავალება
+            </Link>
+          )}
+          {!user && (
+            <Link to="/login" className="text-indigo-600 hover:underline mt-2 inline-block">
+              გაიარეთ ავტორიზაცია ყველა დავალების სანახავად
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -136,9 +192,14 @@ function JobList() {
                     {job.category}
                   </span>
                   <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                    job.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    job.status === 'open' ? 'bg-green-100 text-green-800' : 
+                    job.status === 'assigned' ? 'bg-blue-100 text-blue-800' :
+                    job.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                    'bg-red-100 text-red-800'
                   }`}>
-                    {job.status === 'open' ? '🟢 ღია' : '🔒 დახურული'}
+                    {job.status === 'open' ? '🟢 ღია' : 
+                     job.status === 'assigned' ? '🔄 მიმდინარე' :
+                     job.status === 'completed' ? '🔒 დასრულებული' : '❌ გაუქმებული'}
                   </span>
                 </div>
                 <div className="px-5 py-2 flex-grow">
@@ -159,7 +220,6 @@ function JobList() {
         </div>
       )}
 
-      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-8">
           <button

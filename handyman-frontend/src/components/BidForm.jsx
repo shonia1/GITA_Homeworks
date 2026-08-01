@@ -1,8 +1,16 @@
 // src/components/BidForm.jsx
 import { useState } from 'react';
 import api from '../api/axios';
+import { useAuth } from '../hooks/useAuth';
 
 function BidForm({ jobId, onBidAdded }) {
+  const { user } = useAuth();
+
+  // თუ მომხმარებელი არ არის craftsman, არაფერს ვაჩვენებთ
+  if (!user || user.role !== 'craftsman') {
+    return null;
+  }
+
   const [form, setForm] = useState({
     craftsmanName: '',
     craftsmanPhone: '',

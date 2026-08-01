@@ -1,34 +1,28 @@
 // routes/jobRoutes.js
-// Defines all routes for job-related endpoints.
-
 const express = require('express');
 const {
   createJob,
   getJobs,
   getJob,
   updateJobStatus,
-  deleteAllJobs, // optional: development only
+  deleteJob,
+  acceptJob,
 } = require('../controllers/jobController');
+const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-// ──────────────────────────────────────────────
-// GET  /api/jobs  → all jobs (with filtering, sorting)
-// POST /api/jobs  → create a new job
-// ──────────────────────────────────────────────
 router.route('/')
   .get(getJobs)
-  .post(createJob);
+  .post(protect, authorize('client'), createJob);
 
-// ──────────────────────────────────────────────
-// GET    /api/jobs/:id  → single job by ID
-// PATCH  /api/jobs/:id  → update job status (open/closed etc.)
-// ──────────────────────────────────────────────
 router.route('/:id')
   .get(getJob)
-  .patch(updateJobStatus);
+  .patch(protect, updateJobStatus)
+  .delete(protect, deleteJob);
 
-// (Optional) DELETE all jobs – dev use only
-// router.route('/delete-all').delete(deleteAllJobs);
+// 🔥 Craftsman accepts job
+router.route('/:id/accept')
+  .post(protect, authorize('craftsman'), acceptJob);
 
 module.exports = router;

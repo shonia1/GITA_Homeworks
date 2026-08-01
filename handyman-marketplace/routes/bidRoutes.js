@@ -1,15 +1,29 @@
 // routes/bidRoutes.js
-// Defines routes for bid-related endpoints.
-
 const express = require("express");
-const { createBid, getBidsByJob } = require("../controllers/bidController");
+const {
+  createBid,
+  getBidsByJob,
+  updateBidStatus,
+  cancelAcceptedBid,
+  confirmBid, // NEW
+} = require("../controllers/bidController");
+const { protect, authorize } = require("../middleware/auth");
 
 const router = express.Router();
 
-// POST a new bid
-router.route("/").post(createBid);
+router.route("/")
+  .post(protect, authorize("craftsman"), createBid);
 
-// GET all bids for a specific job
-router.route("/job/:jobId").get(getBidsByJob);
+router.route("/job/:jobId")
+  .get(protect, getBidsByJob);
+
+router.route("/:id/status")
+  .patch(protect, updateBidStatus);
+
+router.route("/:id/cancel")
+  .post(protect, authorize("craftsman"), cancelAcceptedBid);
+
+router.route("/:id/confirm")
+  .post(protect, authorize("craftsman"), confirmBid);
 
 module.exports = router;

@@ -7,7 +7,6 @@ const User = require("../models/User");
 exports.protect = async (req, res, next) => {
   let token;
 
-  // Check if token exists in headers (Authorization: Bearer <token>)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -23,10 +22,7 @@ exports.protect = async (req, res, next) => {
   }
 
   try {
-    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Find user and attach to request object
     req.user = await User.findById(decoded.id).select("-password");
 
     if (!req.user) {
@@ -45,7 +41,6 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-// Optional: Restrict to specific roles (e.g., only craftsmen)
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

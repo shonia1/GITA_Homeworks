@@ -1,6 +1,4 @@
 // models/Job.js
-// Job posting schema - defines what a client posts.
-
 const mongoose = require("mongoose");
 
 const jobSchema = new mongoose.Schema(
@@ -33,13 +31,17 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please specify a district"],
     },
+    address: {
+      type: String,
+      required: [true, "Please add a complete address (street, house, apartment)"],
+    },
     budget: {
       type: Number,
       required: [true, "Please specify a budget"],
       min: [1, "Budget must be at least 1 GEL"],
     },
     photos: {
-      type: [String], // array of image URLs (stored as strings)
+      type: [String],
       default: [],
     },
     status: {
@@ -55,9 +57,14 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a phone number"],
     },
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
-    timestamps: true, // automatically adds createdAt and updatedAt fields
+    timestamps: true,
   },
 );
 
