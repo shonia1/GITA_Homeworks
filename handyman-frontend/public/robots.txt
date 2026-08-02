@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://handyman-marketplace.vercel.app/sitemap.xml
