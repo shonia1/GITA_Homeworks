@@ -8,17 +8,10 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import { lazy, Suspense } from "react";
-import { Helmet } from "react-helmet-async";
 
 function App() {
   return (
     <BrowserRouter>
-      <Helmet>
-        <meta
-          name="google-site-verification"
-          content="QZgWMpIfPXPpro4nNNTre801TG-bX2hmgcWYpdulleA"
-        />
-      </Helmet>
       <GoogleAnalytics />
       <Navbar />
       <Suspense
